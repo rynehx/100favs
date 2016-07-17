@@ -8,13 +8,15 @@ var PhotoStore = require('../stores/photosStore');
 //image sizes
 var ImageSize = require('../util/imageSizes');
 
-var image_size = 20;
+var imageSize = 20;
 
 var imageHeight = 300;
 
+var edge = 5; //this is the space between the pictures
 
+var profilePictureSize= 40;
 
-
+var fadeHeight = 50;
 
 
 
@@ -25,7 +27,7 @@ var HomePage = React.createClass({
   },
 
   componentDidMount: function(){
-    PhotosClientActions.fetchPopularPhotos(image_size);
+    PhotosClientActions.fetchPopularPhotos(imageSize);
     this.popularPhotosListener = PhotoStore.addListener(this._onChange);
     window.addEventListener('resize',function(){
       this.forceUpdate();
@@ -88,7 +90,7 @@ var HomePage = React.createClass({
     var i = 0;
     var row = [];
     var rowWidth = 0;
-    var corner = [0,0];
+    var corner = 0;
     var nextcorner= 0;
     var photo;
     while(i < length){
@@ -102,14 +104,14 @@ var HomePage = React.createClass({
 
             row.forEach(function(rowPhoto){
               var photoWidth = (rowPhoto.width*(imageHeight/rowPhoto.height));
-              position.push([imageHeight*scale, photoWidth*scale, corner[0], nextcorner]);
+              position.push([imageHeight*scale, photoWidth*scale, corner, nextcorner]);
               nextcorner+=photoWidth*scale;
 
             });
 
 
 
-            corner[0]+=imageHeight*scale;
+            corner+=imageHeight*scale;
             row = [];
             rowWidth = 0;
             nextcorner = 0;
@@ -121,9 +123,9 @@ var HomePage = React.createClass({
       i++;
     }
 
-    row.forEach(function(rowPhoto){ // the last photo is appended 
+    row.forEach(function(rowPhoto){ // the last photo is appended
       var photoWidth = (rowPhoto.width*(imageHeight/rowPhoto.height));
-      position.push([imageHeight, photoWidth, corner[0], nextcorner]);
+      position.push([imageHeight, photoWidth, corner, nextcorner]);
       nextcorner+=photoWidth*scale;
 
     });
@@ -142,19 +144,39 @@ var HomePage = React.createClass({
 
         {this._handleLogin()}
         <button onClick = {this.setPhotoPosition}>click</button>
-        <div className = "popular-photos-list" id = "photo-container" style = {{"height": "400px" }}>
+        <div className = "popular-photos-list" id = "photo-container" style = {{"height": "1px" }}>
           {
 
             this.state.photos.map(function(photo,i){
-              // var hs = (photo.width/photo.height); // horizontal scale
-              // var width = hs*parseInt(ImageSize[image_size]).toString();
-              // var height = ImageSize[image_size];
 
               return <div className = "popular-image-container" style = {{ "top": position[i][2], "left": position[i][3], "height" : position[i][0],
                 "width" : position[i][1]}} key = {photo.id}>
 
-                <img className = "popular-image" draggable="false" style = {{"height" : position[i][0],
-                  "width" : position[i][1]}} src={photo.image_url}/>
+                <div className = "image-wrapper">
+                  <div className = "image-overlay" style = {{ "top": 0, "left": edge,"height" : position[i][0],
+                    "width" : position[i][1]-edge*2}} />
+                  <img className = "popular-image" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[i][0]-edge*2,
+                    "width" : position[i][1]-edge*2}} src={photo.image_url}/>
+
+                  <div className = "image-top-fade" on style={{ "top": edge, "left": edge,"height" : fadeHeight,
+                    "width" : position[i][1]-edge*2}} />
+                  <div className = "image-bot-fade" style={{ "top": position[i][0]-edge-fadeHeight, "left": edge,"height" : fadeHeight,
+                    "width" : position[i][1]-edge*2}} />
+                  <img className = "user-photo" style={{ "top": position[i][0]-edge-profilePictureSize, "left": edge, "height": profilePictureSize, "width": profilePictureSize}} src={photo.user.userpic_url}/>
+                  <div className = "user-username" style={{ "top": (position[i][0]-edge)-8-(profilePictureSize/2), "left": edge+profilePictureSize+5}}>{photo.user.username}</div>
+
+
+                  <div className = "image-views">
+                    <i className="material-icons md-light">&#xE417;</i>
+                    {photo.times_viewed}
+                  </div>
+
+                  <div className = "image-rating">
+                    <i className="material-icons md-light">&#xE8CF;</i>
+                    {photo.rating}
+                  </div>
+
+              </div>
 
               </div>;
             })
@@ -168,5 +190,3 @@ var HomePage = React.createClass({
 });
 
 module.exports = HomePage;
-
-//<div className = "image-overlay" style = {{"height" : height, "width" : width}} />

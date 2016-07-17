@@ -25293,9 +25293,15 @@
 	//image sizes
 	var ImageSize = __webpack_require__(247);
 
-	var image_size = 20;
+	var imageSize = 20;
 
 	var imageHeight = 300;
+
+	var edge = 5; //this is the space between the pictures
+
+	var profilePictureSize = 40;
+
+	var fadeHeight = 50;
 
 	var HomePage = React.createClass({
 	  displayName: 'HomePage',
@@ -25305,7 +25311,7 @@
 	  },
 
 	  componentDidMount: function () {
-	    PhotosClientActions.fetchPopularPhotos(image_size);
+	    PhotosClientActions.fetchPopularPhotos(imageSize);
 	    this.popularPhotosListener = PhotoStore.addListener(this._onChange);
 	    window.addEventListener('resize', function () {
 	      this.forceUpdate();
@@ -25368,7 +25374,7 @@
 	    var i = 0;
 	    var row = [];
 	    var rowWidth = 0;
-	    var corner = [0, 0];
+	    var corner = 0;
 	    var nextcorner = 0;
 	    var photo;
 	    while (i < length) {
@@ -25382,11 +25388,11 @@
 
 	        row.forEach(function (rowPhoto) {
 	          var photoWidth = rowPhoto.width * (imageHeight / rowPhoto.height);
-	          position.push([imageHeight * scale, photoWidth * scale, corner[0], nextcorner]);
+	          position.push([imageHeight * scale, photoWidth * scale, corner, nextcorner]);
 	          nextcorner += photoWidth * scale;
 	        });
 
-	        corner[0] += imageHeight * scale;
+	        corner += imageHeight * scale;
 	        row = [];
 	        rowWidth = 0;
 	        nextcorner = 0;
@@ -25399,9 +25405,9 @@
 	    }
 
 	    row.forEach(function (rowPhoto) {
-	      // the last photo is appended 
+	      // the last photo is appended
 	      var photoWidth = rowPhoto.width * (imageHeight / rowPhoto.height);
-	      position.push([imageHeight, photoWidth, corner[0], nextcorner]);
+	      position.push([imageHeight, photoWidth, corner, nextcorner]);
 	      nextcorner += photoWidth * scale;
 	    });
 
@@ -25424,18 +25430,51 @@
 	      ),
 	      React.createElement(
 	        'div',
-	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": "400px" } },
+	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": "1px" } },
 	        this.state.photos.map(function (photo, i) {
-	          // var hs = (photo.width/photo.height); // horizontal scale
-	          // var width = hs*parseInt(ImageSize[image_size]).toString();
-	          // var height = ImageSize[image_size];
 
 	          return React.createElement(
 	            'div',
 	            { className: 'popular-image-container', style: { "top": position[i][2], "left": position[i][3], "height": position[i][0],
 	                "width": position[i][1] }, key: photo.id },
-	            React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "height": position[i][0],
-	                "width": position[i][1] }, src: photo.image_url })
+	            React.createElement(
+	              'div',
+	              { className: 'image-wrapper' },
+	              React.createElement('div', { className: 'image-overlay', style: { "top": 0, "left": edge, "height": position[i][0],
+	                  "width": position[i][1] - edge * 2 } }),
+	              React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[i][0] - edge * 2,
+	                  "width": position[i][1] - edge * 2 }, src: photo.image_url }),
+	              React.createElement('div', { className: 'image-top-fade', on: true, style: { "top": edge, "left": edge, "height": fadeHeight,
+	                  "width": position[i][1] - edge * 2 } }),
+	              React.createElement('div', { className: 'image-bot-fade', style: { "top": position[i][0] - edge - fadeHeight, "left": edge, "height": fadeHeight,
+	                  "width": position[i][1] - edge * 2 } }),
+	              React.createElement('img', { className: 'user-photo', style: { "top": position[i][0] - edge - profilePictureSize, "left": edge, "height": profilePictureSize, "width": profilePictureSize }, src: photo.user.userpic_url }),
+	              React.createElement(
+	                'div',
+	                { className: 'user-username', style: { "top": position[i][0] - edge - 8 - profilePictureSize / 2, "left": edge + profilePictureSize + 5 } },
+	                photo.user.username
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'image-views' },
+	                React.createElement(
+	                  'i',
+	                  { className: 'material-icons md-light' },
+	                  ''
+	                ),
+	                photo.times_viewed
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'image-rating' },
+	                React.createElement(
+	                  'i',
+	                  { className: 'material-icons md-light' },
+	                  ''
+	                ),
+	                photo.rating
+	              )
+	            )
 	          );
 	        })
 	      )
@@ -25444,8 +25483,6 @@
 	});
 
 	module.exports = HomePage;
-
-	//<div className = "image-overlay" style = {{"height" : height, "width" : width}} />
 
 /***/ },
 /* 222 */

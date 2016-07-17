@@ -1,0 +1,105 @@
+.popular-photos-list{
+    background-color: lightgrey;
+  /*display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-content: center;*/
+  width: 100%;
+  position: relative;
+  min-width: 300px;
+  font-family: "Helvetica Neue", HelveticaNeue, Helvetica, TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arial, sans-serif;
+  color: white;
+}
+
+
+.popular-image-container{
+  position: absolute;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.image-wrapper{
+  position: absolute;
+}
+
+.popular-image{
+  position: absolute;
+}
+
+
+.image-overlay{
+  position: absolute;
+}
+
+.image-bot-fade{
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s linear;
+  position: absolute;
+  background: -moz-linear-gradient(bottom, rgba(0,0,0,0.7) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(bottom, rgba(0,0,0,0.7) 0%, rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#007db9e8',GradientType=0 ); /* IE6-9*/
+}
+
+.image-top-fade{
+
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s linear;
+  position: absolute;
+  background: -moz-linear-gradient(top, rgba(0,0,0,0.7) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(0,0,0,0.7) 0%, rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#007db9e8',GradientType=0 ); /* IE6-9*/
+}
+
+.image-wrapper:hover .image-top-fade{
+  visibility: visible;
+  opacity: 1;
+}
+
+.image-wrapper:hover .image-bot-fade{
+  visibility: visible;
+  opacity: 1;
+}
+
+.image-wrapper:hover .user-username{
+  visibility: visible;
+  transform: translate3d(0px, -5px, 0px);
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.image-wrapper:hover .user-photo{
+  visibility: visible;
+  transform: translate3d(0px, -5px, 0px);
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.user-photo{
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.user-username{
+  visibility: hidden;
+  position: absolute;
+  font-size: 14px;
+  color: white;
+  height: 16px;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.image-views{
+    position: absolute;
+    font-size: 14px;
+    display: flex;
+}
