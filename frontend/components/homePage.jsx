@@ -94,26 +94,19 @@ var HomePage = React.createClass({
     while(i < length){
       photo = photos[i];
       photo.newWidth = (photo.width*(imageHeight/photo.height));
-
-
           if(rowWidth+photo.newWidth > container.width ){
+
             rowWidth+=photo.newWidth;
             row.push(photo);
-
             var scale = container.width/(rowWidth);
 
             row.forEach(function(rowPhoto){
-
               var photoWidth = (rowPhoto.width*(imageHeight/rowPhoto.height));
+              position.push([imageHeight*scale, photoWidth*scale, corner[0], nextcorner]);
+              nextcorner+=photoWidth*scale;
 
-              position.push([Math.ceil(imageHeight*scale), Math.ceil(photoWidth*scale), corner[0], nextcorner]);
-
-              nextcorner+=Math.ceil(photoWidth*scale);
             });
 
-            // var adjustedHeight = Math.ceil(imageHeight*( container.width/photoWidth ));
-            // position.push([adjustedHeight, container.width, corner[0], corner[1] ]);
-            // corner[0]+=adjustedHeight;
 
 
             corner[0]+=imageHeight*scale;
@@ -127,7 +120,15 @@ var HomePage = React.createClass({
 
       i++;
     }
-    console.log(position)
+
+    row.forEach(function(rowPhoto){ // the last photo is appended 
+      var photoWidth = (rowPhoto.width*(imageHeight/rowPhoto.height));
+      position.push([imageHeight, photoWidth, corner[0], nextcorner]);
+      nextcorner+=photoWidth*scale;
+
+    });
+
+
     return position;
   },
 
