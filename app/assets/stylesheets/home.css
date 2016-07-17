@@ -1,0 +1,43 @@
+.container{
+  display: flex;
+  justify-content: center;
+
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.home-page{
+
+  width: 100%;
+  padding: 10px 40px
+}
+
+
+.popular-photos-list{
+    background-color: lightgrey;
+  /*display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-content: center;*/
+  width: 100%;
+  position: relative;
+}
+
+
+.popular-image-container{
+  position: absolute;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.popular-image{
+  position: absolute;
+}
+
+
+.image-overlay{
+  position: absolute;
+}
