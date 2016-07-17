@@ -4,9 +4,8 @@
   justify-content: space-around;
   flex-wrap: wrap;
   align-content: center;*/
-  width: 100%;
+  min-width: 100%;
   position: relative;
-  min-width: 300px;
   font-family: "Helvetica Neue", HelveticaNeue, Helvetica, TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arial, sans-serif;
   color: white;
 }
@@ -19,6 +18,7 @@
 }
 
 .image-wrapper{
+  cursor: pointer;
   position: absolute;
 }
 
@@ -54,6 +54,8 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#007db9e8',GradientType=0 ); /* IE6-9*/
 }
 
+
+
 .image-wrapper:hover .image-top-fade{
   visibility: visible;
   opacity: 1;
@@ -64,42 +66,83 @@
   opacity: 1;
 }
 
-.image-wrapper:hover .user-username{
+.image-wrapper:hover .author-username{
   visibility: visible;
   transform: translate3d(0px, -5px, 0px);
   transition: all 0.2s ease-in-out;
   opacity: 1;
 }
 
-.image-wrapper:hover .user-photo{
+.image-wrapper:hover .author-photo{
   visibility: visible;
   transform: translate3d(0px, -5px, 0px);
   transition: all 0.2s ease-in-out;
   opacity: 1;
 }
 
-.user-photo{
-  opacity: 0;
+.image-wrapper:hover .image-views{
+  visibility: visible;
+  transform: translate3d(0px, 5px, 0px);
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.image-wrapper:hover .image-rating{
+  visibility: visible;
+  transform: translate3d(0px, 5px, 0px);
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+}
+
+
+
+.author-photo{
   visibility: hidden;
   position: absolute;
   border-radius: 50%;
+  z-index: 90;
 }
 
-.user-username{
+
+.author-photo:hover  {
+  opacity: 0.7 !important;
+}
+
+
+.author-username{
   visibility: hidden;
   position: absolute;
   font-size: 14px;
   color: white;
-  height: 16px;
-  width: 100px;
   display: flex;
   align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 0px 5px;
 }
+
+.author-username:hover {
+  background-color: rgba(100,100,100,0.6);
+  border-radius: 5px;
+}
+
 
 .image-views{
     position: absolute;
     font-size: 14px;
     display: flex;
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.image-rating{
+    position: absolute;
+    font-size: 14px;
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
 }

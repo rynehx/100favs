@@ -25295,13 +25295,23 @@
 
 	var imageSize = 20;
 
-	var imageHeight = 300;
+	var imageHeight = parseInt(ImageSize[imageSize.toString()]);
 
 	var edge = 5; //this is the space between the pictures
 
 	var profilePictureSize = 40;
-
+	var fontHeight = 20;
 	var fadeHeight = 50;
+	var containerMinWidth = 300;
+	var containerWidth;
+
+	var getRatingWidth = function (rating) {
+	  if (rating.toString().length > 3) {
+	    return 53;
+	  } else {
+	    return 43;
+	  }
+	};
 
 	var HomePage = React.createClass({
 	  displayName: 'HomePage',
@@ -25356,10 +25366,6 @@
 	  },
 
 	  setPhotoPosition: function () {
-	    // var dynamicSizes = this.state.photos.map(function(photo){
-	    //   return [photo.width/photo.height, photo.width*(imageHeight/photo.height)]; //[ratio (h/r), resized_width]
-	    // });
-	    //
 
 	    if (!document.getElementById("photo-container")) {
 	      return [[0, 0, 0, 0]];
@@ -25368,7 +25374,7 @@
 	    var position = []; //[height, width, top, left]
 
 	    var container = document.getElementById("photo-container").getBoundingClientRect();
-
+	    containerWidth = container.width;
 	    var length = this.state.photos.length;
 	    var photos = this.state.photos;
 	    var i = 0;
@@ -25380,6 +25386,7 @@
 	    while (i < length) {
 	      photo = photos[i];
 	      photo.newWidth = photo.width * (imageHeight / photo.height);
+
 	      if (rowWidth + photo.newWidth > container.width) {
 
 	        rowWidth += photo.newWidth;
@@ -25391,7 +25398,6 @@
 	          position.push([imageHeight * scale, photoWidth * scale, corner, nextcorner]);
 	          nextcorner += photoWidth * scale;
 	        });
-
 	        corner += imageHeight * scale;
 	        row = [];
 	        rowWidth = 0;
@@ -25400,7 +25406,6 @@
 	        rowWidth += photo.newWidth;
 	        row.push(photo);
 	      }
-
 	      i++;
 	    }
 
@@ -25408,7 +25413,7 @@
 	      // the last photo is appended
 	      var photoWidth = rowPhoto.width * (imageHeight / rowPhoto.height);
 	      position.push([imageHeight, photoWidth, corner, nextcorner]);
-	      nextcorner += photoWidth * scale;
+	      nextcorner += photoWidth;
 	    });
 
 	    return position;
@@ -25416,7 +25421,14 @@
 
 	  render: function () {
 
-	    var position = this.setPhotoPosition();
+	    var position = this.setPhotoPosition(); // get all the position of the photo to display
+
+	    if (this.state.photos.length > 0) {
+	      // there was an css issue where the container shrinks after I set the position of the photos
+	      //this conditional resets the container
+	      var container = document.getElementById("photo-container");
+	      container.style.width = containerWidth + "px";
+	    }
 
 	    return React.createElement(
 	      'div',
@@ -25430,7 +25442,7 @@
 	      ),
 	      React.createElement(
 	        'div',
-	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": "1px" } },
+	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": "0px", "minWidth": 300 } },
 	        this.state.photos.map(function (photo, i) {
 
 	          return React.createElement(
@@ -25439,44 +25451,67 @@
 	                "width": position[i][1] }, key: photo.id },
 	            React.createElement(
 	              'div',
-	              { className: 'image-wrapper' },
+	              { className: 'image-wrapper', onClick: function () {
+	                  if (!photo.nsfw) {
+	                    var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
+	                    win.focus();
+	                  }
+	                },
+	                style: { "height": position[i][0],
+	                  "width": position[i][1] } },
 	              React.createElement('div', { className: 'image-overlay', style: { "top": 0, "left": edge, "height": position[i][0],
 	                  "width": position[i][1] - edge * 2 } }),
 	              React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[i][0] - edge * 2,
-	                  "width": position[i][1] - edge * 2 }, src: photo.image_url }),
+	                  "width": position[i][1] - edge * 2 }, src: photo.image_url, onClick: function () {
+	                  if (photo.image_url) {
+	                    var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
+	                    win.focus();
+	                  } else {
+	                    photo.image_url = photo.safe_image_url;
+	                    this.forceUpdate();
+	                  }
+	                }.bind(this) }),
+	              ';',
 	              React.createElement('div', { className: 'image-top-fade', on: true, style: { "top": edge, "left": edge, "height": fadeHeight,
 	                  "width": position[i][1] - edge * 2 } }),
 	              React.createElement('div', { className: 'image-bot-fade', style: { "top": position[i][0] - edge - fadeHeight, "left": edge, "height": fadeHeight,
 	                  "width": position[i][1] - edge * 2 } }),
-	              React.createElement('img', { className: 'user-photo', style: { "top": position[i][0] - edge - profilePictureSize, "left": edge, "height": profilePictureSize, "width": profilePictureSize }, src: photo.user.userpic_url }),
+	              React.createElement('img', { className: 'author-photo', onClick: function () {
+	                  var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
+	                },
+	                style: { "top": position[i][0] - edge - profilePictureSize, "left": edge + edge,
+	                  "height": profilePictureSize, "width": profilePictureSize }, src: photo.user.userpic_url }),
 	              React.createElement(
 	                'div',
-	                { className: 'user-username', style: { "top": position[i][0] - edge - 8 - profilePictureSize / 2, "left": edge + profilePictureSize + 5 } },
+	                { className: 'author-username', onClick: function () {
+	                    var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
+	                  },
+	                  style: { "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2, "left": edge + profilePictureSize + 2 * edge, "height": fontHeight } },
 	                photo.user.username
 	              ),
 	              React.createElement(
 	                'div',
-	                { className: 'image-views' },
+	                { className: 'image-views', style: { "left": edge + edge, "top": edge } },
 	                React.createElement(
 	                  'i',
-	                  { className: 'material-icons md-light' },
+	                  { className: 'material-icons md-light space-right' },
 	                  ''
 	                ),
 	                photo.times_viewed
 	              ),
 	              React.createElement(
 	                'div',
-	                { className: 'image-rating' },
+	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
 	                React.createElement(
 	                  'i',
-	                  { className: 'material-icons md-light' },
-	                  ''
+	                  { className: 'material-icons md-light space-right' },
+	                  ''
 	                ),
 	                photo.rating
 	              )
 	            )
 	          );
-	        })
+	        }.bind(this))
 	      )
 	    );
 	  }
@@ -25852,7 +25887,14 @@
 	var popular = [];
 
 	PhotoStore.recievePopularPhotos = function (items) {
+	  items.forEach(function (photo) {
+	    photo.safe_image_url = photo.image_url;
+	    if (photo.nsfw) {
+	      photo.image_url = "";
+	    }
+	  });
 	  popular = items;
+
 	  this.__emitChange();
 	};
 

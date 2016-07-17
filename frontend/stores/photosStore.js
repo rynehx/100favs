@@ -7,9 +7,17 @@ var PhotoStore = new Store(AppDispatcher);
 var popular =[];
 
 PhotoStore.recievePopularPhotos = function(items){
+  items.forEach(function(photo){
+    photo.safe_image_url = photo.image_url;
+    if(photo.nsfw){
+        photo.image_url="";
+    }
+  });
   popular = items;
+
   this.__emitChange();
 };
+
 
 PhotoStore.fetchPopularPhotos = function(){
   return popular;
