@@ -86,13 +86,6 @@
 	    sdk_key: '440b39a5a88d1dc3dc7536a15d2e50cd093e9c69'
 	  });
 
-	  _500px.getAuthorizationStatus(function (status) {
-	    if (status == 'not_logged_in' || status == 'not_authorized') {
-	      _500px.login();
-	    }
-	  });
-	  console.log("jo");
-
 	  var root = document.getElementById('content');
 	  ReactDOM.render(AppRouter, root);
 	});
@@ -25351,14 +25344,7 @@
 	  },
 
 	  pxLogin: function () {
-
-	    _500px.login(function (status) {
-	      if (status == 'authorized') {
-	        alert('You have logged in');
-	      } else {
-	        alert('You denied my application');
-	      }
-	    });
+	    _500px.login();
 	  },
 
 	  handleNSFW: function (photo, position) {
@@ -25402,9 +25388,26 @@
 	      );
 	    } else {
 	      return React.createElement(
-	        'button',
-	        { onClick: this.pxLogin },
-	        'Login'
+	        'div',
+	        null,
+	        React.createElement(
+	          'button',
+	          { onClick: this.pxLogin },
+	          'Login'
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: function () {
+	              _500px.getAuthorizationStatus();
+	              console.log(_500px);
+	            } },
+	          'console.log'
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.logout },
+	          'LogOut'
+	        )
 	      );
 	    }
 	  },
@@ -25471,11 +25474,6 @@
 	      { className: 'home-page' },
 	      'HomePage',
 	      this._handleLogin(),
-	      React.createElement(
-	        'button',
-	        { onClick: this.setPhotoPosition },
-	        'click'
-	      ),
 	      React.createElement(
 	        'div',
 	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": "0px", "minWidth": 300 } },

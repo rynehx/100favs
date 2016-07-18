@@ -62,16 +62,7 @@ var HomePage = React.createClass({
   },
 
   pxLogin: function(){
-
-    _500px.login(function (status) {
-        if (status == 'authorized') {
-            alert('You have logged in');
-
-        } else {
-            alert('You denied my application');
-        }
-    });
-
+    _500px.login();
   },
 
   handleNSFW : function(photo, position){
@@ -104,7 +95,14 @@ var HomePage = React.createClass({
       return <div> HI welcome</div>;
 
     }else{
-      return <button onClick={this.pxLogin}>Login</button>;
+      return <div>
+        <button onClick = {this.pxLogin}>Login</button>
+        <button onClick = {function(){
+            _500px.getAuthorizationStatus();
+            console.log(_500px)
+          }}>console.log</button>
+        <button onClick = {this.logout}>LogOut</button>
+      </div>;
     }
   },
 
@@ -174,7 +172,6 @@ var HomePage = React.createClass({
       <div className="home-page">HomePage
 
         {this._handleLogin()}
-        <button onClick = {this.setPhotoPosition}>click</button>
         <div className = "popular-photos-list" id = "photo-container" style = {{"height": "0px",   "minWidth": 300 }}>
           {
 

@@ -99,7 +99,7 @@
     //      }
     //    });
     this.api = function () {
-  
+
       if (!this.sdk_key) {
         throw "api: SDK not initialized. Use _500px.init() first.";
       }
@@ -168,6 +168,8 @@
     //        console.log('User did authorize the app');
     //      }
     //    });
+
+
     this.login = function (callback) {
       if (!this.sdk_key) {
         throw "login: SDK not initialized. Use _500px.init() first.";
@@ -257,6 +259,7 @@
         iframe_element = document.createElement('iframe');
 
       window[callback_function_name] = function (parameters) {
+
         setTimeout(function () {
           container.removeChild(iframe_element);
         }, 0);
@@ -280,6 +283,8 @@
         }
       };
 
+
+  console.log(container)
       iframe_element.src = site_url + 'api/js-sdk/check_authorization?sdk_key=' + this.sdk_key + '&callback=' + callback_function_name;
       container.appendChild(iframe_element);
     };
