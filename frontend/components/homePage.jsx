@@ -69,8 +69,9 @@ var HomePage = React.createClass({
   },
 
   _onUserChange: function(){
-    this.setState({user: UserStore.fetchCurrentUser()});
-    UserClientActions.fetchUserGalleries();
+    var user = UserStore.fetchCurrentUser();
+    this.setState({user: user});
+    UserClientActions.fetchUserGalleries(user);
   },
 
   _onPhotoChange: function(){
