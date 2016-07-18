@@ -25406,11 +25406,11 @@
 	              // _500px.ensureAuthorization(function(res){
 	              //   console.log(res);
 	              // });
+	              console.log(this.state.photos[1].id);
 
-	              //
-	              // _500px.api('/photos/'+ this.state.photos[1].id +'/vote', 'post',{ id: this.state.photos[1].id, vote: 1 }, function (response) {
-	              //   console.log(response);
-	              // });
+	              _500px.api('/photos/' + this.state.photos[1].id + '/vote', 'post', { id: this.state.photos[1].id, vote: 1 }, function (response) {
+	                console.log(response);
+	              });
 	            }.bind(this) },
 	          'console.log'
 	        ),
