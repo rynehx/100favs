@@ -25398,14 +25398,20 @@
 	        React.createElement(
 	          'button',
 	          { onClick: function () {
-	              _500px.getAuthorizationStatus(function (status) {
-	                if (status == 'not_logged_in' || status == 'not_authorized') {
-	                  _500px.login();
-	                }
+	              // _500px.getAuthorizationStatus(function (status) {
+	              //   if (status == 'not_logged_in' || status == 'not_authorized') {
+	              //       _500px.login();
+	              //   }
+	              // });
+
+	              _500px.ensureAuthorization(function (res) {
+	                console.log(res);
 	              });
-	              _500px.api('/photos/' + this.state.photos[1].id + '/vote', 'post', { id: this.state.photos[1].id, vote: 1 }, function (response) {
-	                console.log(response);
-	              });
+
+	              // 
+	              // _500px.api('/photos/'+ this.state.photos[1].id +'/vote', 'post',{ id: this.state.photos[1].id, vote: 1 }, function (response) {
+	              //   console.log(response);
+	              // });
 	            }.bind(this) },
 	          'console.log'
 	        ),
