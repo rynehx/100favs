@@ -57,8 +57,6 @@
 	//components
 	var HomePage = __webpack_require__(221);
 
-	//SDK init
-
 	var App = React.createClass({
 	  displayName: 'App',
 
@@ -87,6 +85,13 @@
 	  _500px.init({
 	    sdk_key: '440b39a5a88d1dc3dc7536a15d2e50cd093e9c69'
 	  });
+
+	  _500px.getAuthorizationStatus(function (status) {
+	    if (status == 'not_logged_in' || status == 'not_authorized') {
+	      _500px.login();
+	    }
+	  });
+	  console.log("jo");
 
 	  var root = document.getElementById('content');
 	  ReactDOM.render(AppRouter, root);
@@ -25298,7 +25303,7 @@
 	var imageHeight = parseInt(ImageSize[imageSize.toString()]);
 
 	var edge = 5; //this is the space between the pictures
-
+	var loaded = false;
 	var profilePictureSize = 40;
 	var fontHeight = 20;
 	var fadeHeight = 50;
@@ -25336,6 +25341,15 @@
 	    this.setState({ photos: PhotoStore.fetchPopularPhotos() });
 	  },
 
+	  componentDidUpdate: function () {
+	    //the photos container width shrinks after the photos loaded
+	    //this one time re-render sets the container to the original width;
+	    if (!loaded) {
+	      loaded = true;
+	      this.forceUpdate();
+	    }
+	  },
+
 	  pxLogin: function () {
 
 	    _500px.login(function (status) {
@@ -25345,6 +25359,36 @@
 	        alert('You denied my application');
 	      }
 	    });
+	  },
+
+	  handleNSFW: function (photo, position) {
+	    if (photo.show) {
+	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
+	          "width": position[1] - edge * 2 }, src: photo.image_url, onClick: function () {
+	          var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
+	          win.focus();
+	        }.bind(this) });
+	    } else {
+	      return React.createElement(
+	        'div',
+	        { className: 'popular-image nsfw-holder', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
+	            "width": position[1] - edge * 2, "fontSize": position[1] / 10 }, onClick: function () {
+	            photo.show = true;
+	            this.forceUpdate();
+	          }.bind(this) },
+	        React.createElement(
+	          'span',
+	          null,
+	          'Adult Content'
+	        ),
+	        React.createElement('span', { style: { "height": position[0] / 100 } }),
+	        React.createElement(
+	          'span',
+	          null,
+	          'Click to Show'
+	        )
+	      );
+	    }
 	  },
 
 	  _handleLogin: function () {
@@ -25420,15 +25464,7 @@
 	  },
 
 	  render: function () {
-
 	    var position = this.setPhotoPosition(); // get all the position of the photo to display
-
-	    if (this.state.photos.length > 0) {
-	      // there was an css issue where the container shrinks after I set the position of the photos
-	      //this conditional resets the container
-	      var container = document.getElementById("photo-container");
-	      container.style.width = containerWidth + "px";
-	    }
 
 	    return React.createElement(
 	      'div',
@@ -25461,17 +25497,7 @@
 	                  "width": position[i][1] } },
 	              React.createElement('div', { className: 'image-overlay', style: { "top": 0, "left": edge, "height": position[i][0],
 	                  "width": position[i][1] - edge * 2 } }),
-	              React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[i][0] - edge * 2,
-	                  "width": position[i][1] - edge * 2 }, src: photo.image_url, onClick: function () {
-	                  if (photo.image_url) {
-	                    var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
-	                    win.focus();
-	                  } else {
-	                    photo.image_url = photo.safe_image_url;
-	                    this.forceUpdate();
-	                  }
-	                }.bind(this) }),
-	              ';',
+	              this.handleNSFW(photo, position[i]),
 	              React.createElement('div', { className: 'image-top-fade', on: true, style: { "top": edge, "left": edge, "height": fadeHeight,
 	                  "width": position[i][1] - edge * 2 } }),
 	              React.createElement('div', { className: 'image-bot-fade', style: { "top": position[i][0] - edge - fadeHeight, "left": edge, "height": fadeHeight,
@@ -25888,13 +25914,13 @@
 
 	PhotoStore.recievePopularPhotos = function (items) {
 	  items.forEach(function (photo) {
-	    photo.safe_image_url = photo.image_url;
 	    if (photo.nsfw) {
-	      photo.image_url = "";
+	      photo.show = false;
+	    } else {
+	      photo.show = true;
 	    }
 	  });
 	  popular = items;
-
 	  this.__emitChange();
 	};
 

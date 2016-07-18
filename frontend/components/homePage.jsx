@@ -13,7 +13,7 @@ var imageSize = 20;
 var imageHeight = parseInt(ImageSize[imageSize.toString()]);
 
 var edge = 5; //this is the space between the pictures
-
+var loaded = false;
 var profilePictureSize= 40;
 var fontHeight = 20;
 var fadeHeight = 50;
@@ -53,7 +53,13 @@ var HomePage = React.createClass({
     this.setState({photos: PhotoStore.fetchPopularPhotos()});
   },
 
-
+  componentDidUpdate: function(){ //the photos container width shrinks after the photos loaded
+    //this one time re-render sets the container to the original width;
+    if(!loaded){
+      loaded = true;
+      this.forceUpdate();
+    }
+  },
 
   pxLogin: function(){
 
@@ -68,7 +74,27 @@ var HomePage = React.createClass({
 
   },
 
+  handleNSFW : function(photo, position){
+    if(photo.show){
+      return <img className = "popular-image" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[0]-edge*2,
+          "width" : position[1]-edge*2}} src={photo.image_url} onClick = {function(){
+              var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
+              win.focus();
+          }.bind(this)}/>;
+    }else{
+      return <div className = "popular-image nsfw-holder" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[0]-edge*2,
+          "width" : position[1]-edge*2, "fontSize": (position[1])/(10) }}  onClick = {function(){
+              photo.show = true;
+              this.forceUpdate();
+          }.bind(this)}>
 
+          <span>Adult Content</span>
+          <span style = {{"height":position[0]/100}}></span>
+          <span>Click to Show</span>
+
+        </div>;
+    }
+  },
 
 
   _handleLogin: function(){
@@ -142,14 +168,7 @@ var HomePage = React.createClass({
 
 
   render: function(){
-
     var position = this.setPhotoPosition(); // get all the position of the photo to display
-
-    if(this.state.photos.length>0){ // there was an css issue where the container shrinks after I set the position of the photos
-      //this conditional resets the container
-      var container = document.getElementById("photo-container");
-      container.style.width = containerWidth+"px";
-    }
 
     return (
       <div className="home-page">HomePage
@@ -176,17 +195,7 @@ var HomePage = React.createClass({
                   <div className = "image-overlay" style = {{ "top": 0, "left": edge,"height" : position[i][0],
                     "width" : position[i][1]-edge*2}} />
 
-                  <img className = "popular-image" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[i][0]-edge*2,
-                      "width" : position[i][1]-edge*2}} src={photo.image_url} onClick = {function(){
-                        if(photo.image_url){
-                          var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
-                          win.focus();
-                        }else{
-                          photo.image_url = photo.safe_image_url;
-                          this.forceUpdate();
-                        }
-                      }.bind(this)}/>;
-
+                  {this.handleNSFW(photo, position[i])}
                   <div className = "image-top-fade" on style={{ "top": edge, "left": edge,"height" : fadeHeight,
                     "width" : position[i][1]-edge*2}} />
                   <div className = "image-bot-fade" style={{ "top": position[i][0]-edge-fadeHeight, "left": edge,"height" : fadeHeight,

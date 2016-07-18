@@ -146,3 +146,11 @@
     display: flex;
     align-items: center;
 }
+
+.nsfw-holder{
+  background-color: #3D3D3D;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
