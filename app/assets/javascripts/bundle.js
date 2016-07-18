@@ -25288,6 +25288,7 @@
 	var UserClientActions = __webpack_require__(250);
 	//stores
 	var PhotoStore = __webpack_require__(229);
+	var UserStore = __webpack_require__(251);
 
 	//image sizes
 	var ImageSize = __webpack_require__(247);
@@ -25324,6 +25325,15 @@
 	  componentDidMount: function () {
 	    PhotosClientActions.fetchPopularPhotos(imageSize);
 	    this.popularPhotosListener = PhotoStore.addListener(this._onChange);
+	    this.currentUser = UserStore.addListener(this._onChange);
+	    _500px.getAuthorizationStatus(function (status) {
+	      if (status === "authorized") {
+	        UserClientActions.fetchCurrentUser();
+	      }
+	    });
+
+	    currentUser = UserClientActions.fetchCurrentUser();
+
 	    window.addEventListener('resize', function () {
 	      this.forceUpdate();
 	    }.bind(this));
@@ -25334,6 +25344,7 @@
 	  },
 
 	  _onChange: function () {
+	    this.setState({ user: UserStore.fetchCurrentUser() });
 	    this.setState({ photos: PhotoStore.fetchPopularPhotos() });
 	  },
 
@@ -25381,24 +25392,22 @@
 	  },
 
 	  _handleLogin: function () {
-	    _500px.getAuthorizationStatus(function (status) {
-	      if (status === "authorized") {
-	        currentUser = UserClientActions.fetchCurrentUser();
-	        return React.createElement(
-	          'div',
-	          { className: 'current-user-container' },
-	          React.createElement('img', { className: 'current-user-picture', src: currentUser.userpic_url })
-	        );
-	      } else {
-	        return React.createElement(
-	          'div',
-	          { className: 'login-button', onClick: function () {
-	              _500px.login();
-	            } },
-	          'Login'
-	        );
-	      }
-	    });
+	    console.log(this.state.user);
+	    if (this.state.user) {
+	      return React.createElement(
+	        'div',
+	        { className: 'current-user-container' },
+	        React.createElement('img', { className: 'current-user-picture', src: this.state.user.userpic_url })
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        { className: 'login-button', onClick: function () {
+	            _500px.login();
+	          } },
+	        'Login'
+	      );
+	    }
 	  },
 
 	  setPhotoPosition: function () {
@@ -32436,6 +32445,37 @@
 	};
 
 	module.exports = UserClientActions;
+
+/***/ },
+/* 251 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(224),
+	    Store = __webpack_require__(230).Store;
+
+	var UserConstants = __webpack_require__(249);
+
+	var UserStore = new Store(AppDispatcher);
+
+	var currentUser;
+
+	UserStore.recieveCurrentUser = function (user) {
+	  currentUser = user;
+	};
+
+	UserStore.fetchCurrentUser = function () {
+	  return currentUser;
+	};
+
+	UserStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case UserConstants.fetchCurrentUser:
+	      UserStore.recieveCurrentUser(payload.items);
+	      break;
+	  }
+	};
+
+	module.exports = UserStore;
 
 /***/ }
 /******/ ]);

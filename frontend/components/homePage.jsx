@@ -5,6 +5,7 @@ var PhotosClientActions = require('../actions/PhotosClientActions');
 var UserClientActions = require('../actions/UserClientActions');
 //stores
 var PhotoStore = require('../stores/photosStore');
+var UserStore = require('../stores/userStore');
 
 //image sizes
 var ImageSize = require('../util/imageSizes');
@@ -43,6 +44,15 @@ var HomePage = React.createClass({
   componentDidMount: function(){
     PhotosClientActions.fetchPopularPhotos(imageSize);
     this.popularPhotosListener = PhotoStore.addListener(this._onChange);
+    this.currentUser = UserStore.addListener(this._onChange);
+    _500px.getAuthorizationStatus(function (status) {
+      if(status === "authorized"){
+        UserClientActions.fetchCurrentUser();
+      }
+    });
+
+    currentUser = UserClientActions.fetchCurrentUser();
+
     window.addEventListener('resize',function(){
       this.forceUpdate();
     }.bind(this));
@@ -53,6 +63,7 @@ var HomePage = React.createClass({
   },
 
   _onChange: function(){
+    this.setState({user: UserStore.fetchCurrentUser()});
     this.setState({photos: PhotoStore.fetchPopularPhotos()});
   },
 
@@ -92,21 +103,19 @@ var HomePage = React.createClass({
 
 
   _handleLogin: function(){
-    _500px.getAuthorizationStatus(function (status) {
-      if(status === "authorized"){
-        currentUser = UserClientActions.fetchCurrentUser();
-        return <div className = "current-user-container">
-          <img className = "current-user-picture" src = {currentUser.userpic_url}></img>
-        </div>;
+    console.log(this.state.user);
+    if(this.state.user){
+      return <div className = "current-user-container">
+        <img className = "current-user-picture" src = {this.state.user.userpic_url}></img>
+      </div>;
+    }else{
+      return <div className = "login-button" onClick = {function(){
+          _500px.login();
+        }}>
+        Login
+      </div>;
+    }
 
-      }else{
-        return <div className = "login-button" onClick = {function(){
-            _500px.login();
-          }}>
-          Login
-        </div>;
-      }
-    });
   },
 
 
