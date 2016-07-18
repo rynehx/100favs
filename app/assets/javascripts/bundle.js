@@ -32635,7 +32635,21 @@
 	                return React.createElement(
 	                  'li',
 	                  { className: 'gallery-item' },
-	                  React.createElement('img', { className: 'gallery-cover', src: gallery.cover_photo[0].url })
+	                  React.createElement('img', { className: 'gallery-cover', src: gallery.cover_photo[0].url }),
+	                  React.createElement(
+	                    'div',
+	                    { className: 'add-gallery-button' },
+	                    React.createElement(
+	                      'i',
+	                      { className: 'material-icons md-48 add-gallery-icon' },
+	                      ''
+	                    ),
+	                    React.createElement(
+	                      'div',
+	                      { className: 'add-gallery-text' },
+	                      'Gallery'
+	                    )
+	                  )
 	                );
 	              })
 	            )

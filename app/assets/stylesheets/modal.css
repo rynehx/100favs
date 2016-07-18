@@ -6,8 +6,8 @@
 
 .collection-modal-left{
   height: 100%;
-  width: 60%;
-  background-color: darkgrey;
+  width: 100%;
+  background-color: #3D3D3D;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +15,10 @@
 
 .collection-modal-right{
   height: 100%;
-  width: 40%;
+  min-width: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .collection-modal-image{
@@ -31,17 +34,41 @@
 
 .collections-container{
   overflow: scroll;
-  width: 100%;
+  width: 90%;
   height: 100%;
 }
 
 .gallery-item{
   width: 100%;
   display: flex;
-  height: 35px;
+  height: 80px;
+  border-radius: 10px;
+  align-items: center;
+}
+
+.gallery-item:hover{
+  background: darkgrey;
 }
 
 .gallery-cover{
-  height: 35px;
-  width: 35px;
+  height: 80px;
+  width: 80px;
+}
+
+.add-gallery-icon{
+  color: darkgrey;
+}
+
+.add-gallery-button:hover .add-gallery-icon{
+  color: black;
+}
+
+.add-gallery-button{
+  width: 100px;
+  height: 80px;
+  margin-left: 50px;
+}
+
+.add-gallery-text{
+  font-size: 20px;
 }
