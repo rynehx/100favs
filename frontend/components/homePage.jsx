@@ -98,7 +98,11 @@ var HomePage = React.createClass({
       return <div>
         <button onClick = {this.pxLogin}>Login</button>
         <button onClick = {function(){
-            console.log(this.state.photos[1].id)
+          _500px.getAuthorizationStatus(function (status) {
+            if (status == 'not_logged_in' || status == 'not_authorized') {
+                _500px.login();
+            }
+          });
           _500px.api('/photos/'+ this.state.photos[1].id +'/vote', 'post',{ id: this.state.photos[1].id, vote: 1 }, function (response) {
             console.log(response);
           });
