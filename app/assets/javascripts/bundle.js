@@ -25399,7 +25399,7 @@
 	          'button',
 	          { onClick: function () {
 	              _500px.api('/photos/1/vote', { id: 1, vote: 1 }, function (response) {
-	                console.log(response.data.photos);
+	                console.log(response);
 	              });
 	            } },
 	          'console.log'

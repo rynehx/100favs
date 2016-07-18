@@ -99,7 +99,7 @@ var HomePage = React.createClass({
         <button onClick = {this.pxLogin}>Login</button>
         <button onClick = {function(){
           _500px.api('/photos/1/vote', { id: 1, vote: 1 }, function (response) {
-            console.log(response.data.photos);
+            console.log(response);
           });
 
           }}>console.log</button>
