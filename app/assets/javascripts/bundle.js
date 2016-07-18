@@ -32462,7 +32462,9 @@
 	var currentUser;
 
 	UserStore.recieveCurrentUser = function (user) {
+	  console.log(user);
 	  currentUser = user;
+	  this.__emitChange();
 	};
 
 	UserStore.fetchCurrentUser = function () {
