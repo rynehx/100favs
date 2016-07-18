@@ -25286,9 +25286,11 @@
 	//actions
 	var PhotosClientActions = __webpack_require__(222);
 	var UserClientActions = __webpack_require__(229);
+	var GalleryClientActions = __webpack_require__(277);
 	//stores
 	var PhotoStore = __webpack_require__(232);
 	var UserStore = __webpack_require__(250);
+	var GalleryStore = __webpack_require__(280);
 	//components
 	var CollectionModal = __webpack_require__(251);
 
@@ -25336,7 +25338,7 @@
 	    PhotosClientActions.fetchPopularPhotos(imageSize);
 	    this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
 	    this.currentUserListener = UserStore.addListener(this._onUserChange);
-	    this.currentGalleryListener = UserStore.addListener(this._onGalleriesChange);
+	    this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
 	    currentUser = UserClientActions.fetchCurrentUser();
 	    window.addEventListener('resize', function () {
 	      this.forceUpdate();
@@ -25351,8 +25353,8 @@
 
 	  _onUserChange: function () {
 	    var user = UserStore.fetchCurrentUser();
+	    GalleryClientActions.fetchUserGalleries(user);
 	    this.setState({ user: user });
-	    UserClientActions.fetchUserGalleries(user);
 	  },
 
 	  _onPhotoChange: function () {
@@ -25998,17 +26000,8 @@
 	        items: response.data.user
 	      });
 	    });
-	  },
-
-	  fetchUserGalleries: function (user) {
-	    console.log(user);
-	    _500px.api('users/' + user.id + '/galleries', { rpp: 100, sort: 'last_added_to_at', include_cover: 1 }, function (response) {
-	      Dispatcher.dispatch({
-	        actionType: UserConstants.fetchUserGalleries,
-	        items: response.data.galleries
-	      });
-	    });
 	  }
+
 	};
 
 /***/ },
@@ -26016,8 +26009,7 @@
 /***/ function(module, exports) {
 
 	module.exports = {
-	  fetchCurrentUser: "FETCHCURRENTUSER",
-	  fetchUserGalleries: "FETCHUSERGALLERIES"
+	  fetchCurrentUser: "FETCHCURRENTUSER"
 	};
 
 /***/ },
@@ -32520,7 +32512,6 @@
 	var UserStore = new Store(AppDispatcher);
 
 	var currentUser;
-	var galleries = [];
 
 	UserStore.recieveCurrentUser = function (user) {
 	  currentUser = user;
@@ -32545,9 +32536,6 @@
 	  switch (payload.actionType) {
 	    case UserConstants.fetchCurrentUser:
 	      UserStore.recieveCurrentUser(payload.items);
-	      break;
-	    case UserConstants.fetchUserGalleries:
-	      UserStore.recieveUserGalleries(payload.items);
 	      break;
 	  }
 	};
@@ -32620,7 +32608,6 @@
 	  goToItem: function (like) {},
 
 	  render: function () {
-	    console.log(this.props.galleries);
 
 	    return React.createElement(
 	      'div',
@@ -34852,6 +34839,79 @@
 	module.exports = {
 	  20: "300px"
 	};
+
+/***/ },
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var GalleryApiUtils = __webpack_require__(278);
+
+	var GalleryClientActions = {
+	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries
+	};
+
+	module.exports = GalleryClientActions;
+
+/***/ },
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(224);
+	var GalleryConstants = __webpack_require__(279);
+
+	var GalleryApiUtils = {
+	  fetchUserGalleries: function (user) {
+	    console.log(user);
+	    _500px.api('users/' + user.id + '/galleries', { rpp: 100, sort: 'last_added_to_at', include_cover: 1 }, function (response) {
+	      Dispatcher.dispatch({
+	        actionType: GalleryConstants.fetchUserGalleries,
+	        items: response.data.galleries
+	      });
+	    });
+	  }
+	};
+
+	module.exports = GalleryApiUtils;
+
+/***/ },
+/* 279 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  fetchUserGalleries: "FETCHUSERGALLERIES"
+	};
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(224),
+	    Store = __webpack_require__(233).Store;
+
+	var GalleryConstants = __webpack_require__(279);
+
+	var GalleryStore = new Store(AppDispatcher);
+
+	var galleries = [];
+
+	GalleryStore.recieveUserGalleries = function (data) {
+	  galleries = data;
+	  this.__emitChange();
+	};
+
+	GalleryStore.fetchUserGalleries = function () {
+	  return galleries;
+	};
+
+	GalleryStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case GalleryConstants.fetchUserGalleries:
+	      GalleryStore.recieveUserGalleries(payload.items);
+	      break;
+	  }
+	};
+
+	module.exports = GalleryStore;
 
 /***/ }
 /******/ ]);

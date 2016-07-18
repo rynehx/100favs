@@ -68,7 +68,7 @@ var collectionModal = React.createClass({
 
 
     render: function(){
-      console.log(this.props.galleries);
+    
 
       return (
          <div className = "image-collection" style={{ "left": (this.props.position[1])-(this.props.edge*2)-50-3, "top": (this.props.position[0]-this.props.edge)-(this.props.fontHeight/2)-(this.props.profilePictureSize/2)}}>

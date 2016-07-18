@@ -3,9 +3,11 @@ var React = require('react');
 //actions
 var PhotosClientActions = require('../actions/PhotosClientActions');
 var UserClientActions = require('../actions/UserClientActions');
+var GalleryClientActions = require('../actions/GalleryClientActions');
 //stores
 var PhotoStore = require('../stores/photosStore');
 var UserStore = require('../stores/userStore');
+var GalleryStore = require('../stores/galleryStore');
 //components
 var CollectionModal = require('../components/modals/collectionModal');
 
@@ -55,7 +57,7 @@ var HomePage = React.createClass({
     PhotosClientActions.fetchPopularPhotos(imageSize);
     this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
     this.currentUserListener = UserStore.addListener(this._onUserChange);
-    this.currentGalleryListener = UserStore.addListener(this._onGalleriesChange);
+    this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
     currentUser = UserClientActions.fetchCurrentUser();
     window.addEventListener('resize',function(){
       this.forceUpdate();
@@ -70,8 +72,9 @@ var HomePage = React.createClass({
 
   _onUserChange: function(){
     var user = UserStore.fetchCurrentUser();
+    GalleryClientActions.fetchUserGalleries(user);
     this.setState({user: user});
-    UserClientActions.fetchUserGalleries(user);
+
   },
 
   _onPhotoChange: function(){

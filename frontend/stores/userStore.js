@@ -6,7 +6,7 @@ var UserConstants = require('../constants/userConstants');
 var UserStore = new Store(AppDispatcher);
 
 var currentUser;
-var galleries = [];
+
 
 UserStore.recieveCurrentUser = function(user){
   currentUser = user;
@@ -33,9 +33,6 @@ UserStore.__onDispatch = function(payload){
   switch(payload.actionType){
     case UserConstants.fetchCurrentUser:
     UserStore.recieveCurrentUser(payload.items);
-    break;
-    case UserConstants.fetchUserGalleries:
-    UserStore.recieveUserGalleries(payload.items);
     break;
   }
 };
