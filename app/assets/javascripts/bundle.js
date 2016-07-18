@@ -25285,13 +25285,13 @@
 	var React = __webpack_require__(1);
 	//actions
 	var PhotosClientActions = __webpack_require__(222);
-	var UserClientActions = __webpack_require__(250);
+	var UserClientActions = __webpack_require__(229);
 	//stores
-	var PhotoStore = __webpack_require__(229);
-	var UserStore = __webpack_require__(251);
+	var PhotoStore = __webpack_require__(232);
+	var UserStore = __webpack_require__(250);
 
 	//image sizes
-	var ImageSize = __webpack_require__(247);
+	var ImageSize = __webpack_require__(251);
 
 	var imageSize = 20;
 
@@ -25413,15 +25413,21 @@
 
 	  handleFavorite: function (photo) {
 	    if (photo.liked) {
+	      //photo is liked, click is unlike action
 	      return React.createElement(
 	        'i',
-	        { className: 'material-icons hred' },
+	        { className: 'material-icons hred', onClick: function () {
+	            PhotosClientActions.unlikePhoto(photo, imageSize);
+	          } },
 	        'favorite'
 	      );
 	    } else {
+	      //photo is not liked, click is like action
 	      return React.createElement(
 	        'i',
-	        { className: 'material-icons hred' },
+	        { className: 'material-icons hred', onClick: function () {
+	            PhotosClientActions.likePhoto(photo, imageSize);
+	          } },
 	        'favorite_border'
 	      );
 	    }
@@ -25548,7 +25554,9 @@
 	                { className: 'image-collection', style: { "left": position[i][1] - edge * 2 - 50 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
 	                React.createElement(
 	                  'i',
-	                  { className: 'material-icons md-light space-right hyellow' },
+	                  { className: 'material-icons md-light space-right hyellow', onClick: function () {
+	                      console.log("collection clicked");
+	                    } },
 	                  ''
 	                )
 	              ),
@@ -25577,11 +25585,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var PhotoApiUtils = __webpack_require__(223);
-	var UserApiUtils = __webpack_require__(248);
 
 	var PhotosClientActions = {
 	  fetchPopularPhotos: PhotoApiUtils.fetchPopularPhotos,
-	  fetchCurrentUser: UserApiUtils.fetchCurrentUser
+	  likePhoto: PhotoApiUtils.likePhoto,
+	  unlikePhoto: PhotoApiUtils.unlikePhoto
 	};
 
 	module.exports = PhotosClientActions;
@@ -25600,6 +25608,22 @@
 	        actionType: PhotoConstants.fetchPopularPhotos,
 	        items: response.data.photos
 	      });
+	    });
+	  },
+
+	  likePhoto: function (photo, imageSize) {
+	    _500px.api('/photos/' + photo.id + '/vote', "post", { id: photo.id, vote: 1 }, function (res) {
+	      if (res.success) {
+	        this.fetchPopularPhotos(imageSize);
+	      }
+	    });
+	  },
+
+	  unlikePhoto: function (photo, imageSize) {
+	    _500px.api('/photos/' + photo.id + '/vote', "post", { id: photo.id, vote: 0 }, function (res) {
+	      if (res.success) {
+	        this.fetchPopularPhotos(imageSize);
+	      }
 	    });
 	  }
 
@@ -25932,8 +25956,46 @@
 /* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var UserApiUtils = __webpack_require__(230);
+
+	var UserClientActions = {
+	  fetchCurrentUser: UserApiUtils.fetchCurrentUser
+	};
+
+	module.exports = UserClientActions;
+
+/***/ },
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(224);
+	var UserConstants = __webpack_require__(231);
+
+	module.exports = {
+	  fetchCurrentUser: function () {
+	    _500px.api('/users', {}, function (response) {
+	      Dispatcher.dispatch({
+	        actionType: UserConstants.fetchCurrentUser,
+	        items: response.data.user
+	      });
+	    });
+	  }
+	};
+
+/***/ },
+/* 231 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  fetchCurrentUser: "FETCHCURRENTUSER"
+	};
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(230).Store;
+	    Store = __webpack_require__(233).Store;
 
 	var PhotoConstants = __webpack_require__(228);
 	var PhotoStore = new Store(AppDispatcher);
@@ -25968,7 +26030,7 @@
 	module.exports = PhotoStore;
 
 /***/ },
-/* 230 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25980,15 +26042,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Container = __webpack_require__(231);
-	module.exports.MapStore = __webpack_require__(234);
-	module.exports.Mixin = __webpack_require__(246);
-	module.exports.ReduceStore = __webpack_require__(235);
-	module.exports.Store = __webpack_require__(236);
+	module.exports.Container = __webpack_require__(234);
+	module.exports.MapStore = __webpack_require__(237);
+	module.exports.Mixin = __webpack_require__(249);
+	module.exports.ReduceStore = __webpack_require__(238);
+	module.exports.Store = __webpack_require__(239);
 
 
 /***/ },
-/* 231 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26010,10 +26072,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStoreGroup = __webpack_require__(232);
+	var FluxStoreGroup = __webpack_require__(235);
 
 	var invariant = __webpack_require__(227);
-	var shallowEqual = __webpack_require__(233);
+	var shallowEqual = __webpack_require__(236);
 
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -26171,7 +26233,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 232 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26252,7 +26314,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 233 */
+/* 236 */
 /***/ function(module, exports) {
 
 	/**
@@ -26307,7 +26369,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 234 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26328,8 +26390,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxReduceStore = __webpack_require__(235);
-	var Immutable = __webpack_require__(245);
+	var FluxReduceStore = __webpack_require__(238);
+	var Immutable = __webpack_require__(248);
 
 	var invariant = __webpack_require__(227);
 
@@ -26457,7 +26519,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 235 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26478,9 +26540,9 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStore = __webpack_require__(236);
+	var FluxStore = __webpack_require__(239);
 
-	var abstractMethod = __webpack_require__(244);
+	var abstractMethod = __webpack_require__(247);
 	var invariant = __webpack_require__(227);
 
 	var FluxReduceStore = (function (_FluxStore) {
@@ -26564,7 +26626,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 236 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26583,7 +26645,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _require = __webpack_require__(237);
+	var _require = __webpack_require__(240);
 
 	var EventEmitter = _require.EventEmitter;
 
@@ -26747,7 +26809,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 237 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26760,14 +26822,14 @@
 	 */
 
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(238)
+	  EventEmitter: __webpack_require__(241)
 	};
 
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 238 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26786,11 +26848,11 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var EmitterSubscription = __webpack_require__(239);
-	var EventSubscriptionVendor = __webpack_require__(241);
+	var EmitterSubscription = __webpack_require__(242);
+	var EventSubscriptionVendor = __webpack_require__(244);
 
-	var emptyFunction = __webpack_require__(243);
-	var invariant = __webpack_require__(242);
+	var emptyFunction = __webpack_require__(246);
+	var invariant = __webpack_require__(245);
 
 	/**
 	 * @class BaseEventEmitter
@@ -26964,7 +27026,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 239 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26985,7 +27047,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var EventSubscription = __webpack_require__(240);
+	var EventSubscription = __webpack_require__(243);
 
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -27017,7 +27079,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 240 */
+/* 243 */
 /***/ function(module, exports) {
 
 	/**
@@ -27071,7 +27133,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 241 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27090,7 +27152,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(242);
+	var invariant = __webpack_require__(245);
 
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -27180,7 +27242,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 242 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27235,7 +27297,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 243 */
+/* 246 */
 /***/ function(module, exports) {
 
 	/**
@@ -27277,7 +27339,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 244 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27304,7 +27366,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 245 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32288,7 +32350,7 @@
 	}));
 
 /***/ },
-/* 246 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -32305,7 +32367,7 @@
 
 	'use strict';
 
-	var FluxStoreGroup = __webpack_require__(232);
+	var FluxStoreGroup = __webpack_require__(235);
 
 	var invariant = __webpack_require__(227);
 
@@ -32411,59 +32473,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 247 */
-/***/ function(module, exports) {
-
-	module.exports = {
-	  20: "300px"
-	};
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Dispatcher = __webpack_require__(224);
-	var UserConstants = __webpack_require__(249);
-
-	module.exports = {
-	  fetchCurrentUser: function () {
-	    _500px.api('/users', {}, function (response) {
-	      Dispatcher.dispatch({
-	        actionType: UserConstants.fetchCurrentUser,
-	        items: response.data.user
-	      });
-	    });
-	  }
-	};
-
-/***/ },
-/* 249 */
-/***/ function(module, exports) {
-
-	module.exports = {
-	  fetchCurrentUser: "FETCHCURRENTUSER"
-	};
-
-/***/ },
 /* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var UserApiUtils = __webpack_require__(248);
-
-	var UserClientActions = {
-	  fetchCurrentUser: UserApiUtils.fetchCurrentUser
-	};
-
-	module.exports = UserClientActions;
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(230).Store;
+	    Store = __webpack_require__(233).Store;
 
-	var UserConstants = __webpack_require__(249);
+	var UserConstants = __webpack_require__(231);
 
 	var UserStore = new Store(AppDispatcher);
 
@@ -32488,6 +32504,14 @@
 	};
 
 	module.exports = UserStore;
+
+/***/ },
+/* 251 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  20: "300px"
+	};
 
 /***/ }
 /******/ ]);
