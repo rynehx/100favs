@@ -25285,6 +25285,7 @@
 	var React = __webpack_require__(1);
 	//actions
 	var PhotosClientActions = __webpack_require__(222);
+	var UserClientActions = __webpack_require__(250);
 	//stores
 	var PhotoStore = __webpack_require__(229);
 
@@ -25302,6 +25303,8 @@
 	var fadeHeight = 50;
 	var containerMinWidth = 300;
 	var containerWidth;
+
+	var currentUser;
 
 	var getRatingWidth = function (rating) {
 	  if (rating.toString().length > 3) {
@@ -25378,45 +25381,24 @@
 	  },
 
 	  _handleLogin: function () {
-	    var _loggedIn;
-
-	    if (_loggedIn) {
-	      return React.createElement(
-	        'div',
-	        null,
-	        ' HI welcome'
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'button',
-	          { onClick: this.pxLogin },
+	    _500px.getAuthorizationStatus(function (status) {
+	      if (status === "authorized") {
+	        currentUser = UserClientActions.fetchCurrentUser();
+	        return React.createElement(
+	          'div',
+	          { className: 'current-user-container' },
+	          React.createElement('img', { className: 'current-user-picture', src: currentUser.userpic_url })
+	        );
+	      } else {
+	        return React.createElement(
+	          'div',
+	          { className: 'login-button', onClick: function () {
+	              _500px.login();
+	            } },
 	          'Login'
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: function () {
-
-	              _500px.getAuthorizationStatus(function (res) {
-	                console.log("res below");
-	                console.log(res);
-	              });
-
-	              _500px.api('/photos/' + this.state.photos[1].id + '/vote', 'post', { id: this.state.photos[1].id, vote: 1 }, function (response) {
-	                console.log(response);
-	              });
-	            }.bind(this) },
-	          'console.log'
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this.logout },
-	          'LogOut'
-	        )
-	      );
-	    }
+	        );
+	      }
+	    });
 	  },
 
 	  setPhotoPosition: function () {
@@ -25532,6 +25514,26 @@
 	              ),
 	              React.createElement(
 	                'div',
+	                { className: 'image-favorite', style: { "left": edge + edge, "top": edge } },
+	                React.createElement(
+	                  'i',
+	                  { className: 'material-icons md-light space-right' },
+	                  ''
+	                ),
+	                photo.times_viewed
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'image-collection', style: { "left": edge + edge, "top": edge } },
+	                React.createElement(
+	                  'i',
+	                  { 'class': 'material-icons md-light' },
+	                  ''
+	                ),
+	                photo.times_viewed
+	              ),
+	              React.createElement(
+	                'div',
 	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
 	                React.createElement(
 	                  'i',
@@ -25555,9 +25557,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var PhotoApiUtils = __webpack_require__(223);
+	var UserApiUtils = __webpack_require__(248);
 
 	var PhotosClientActions = {
-	  fetchPopularPhotos: PhotoApiUtils.fetchPopularPhotos
+	  fetchPopularPhotos: PhotoApiUtils.fetchPopularPhotos,
+	  fetchCurrentUser: UserApiUtils.fetchCurrentUser
 	};
 
 	module.exports = PhotosClientActions;
@@ -32394,6 +32398,44 @@
 	module.exports = {
 	  20: "300px"
 	};
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(224);
+	var UserConstants = __webpack_require__(249);
+
+	module.exports = {
+	  fetchCurrentUser: function () {
+	    _500px.api('/users', {}, function (response) {
+	      Dispatcher.dispatch({
+	        actionType: UserConstants.fetchCurrentUser,
+	        items: response.data.user
+	      });
+	    });
+	  }
+	};
+
+/***/ },
+/* 249 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  fetchCurrentUser: "FETCHCURRENTUSER"
+	};
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var UserApiUtils = __webpack_require__(248);
+
+	var UserClientActions = {
+	  fetchCurrentUser: UserApiUtils.fetchCurrentUser
+	};
+
+	module.exports = UserClientActions;
 
 /***/ }
 /******/ ]);

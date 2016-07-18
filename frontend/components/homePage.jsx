@@ -2,6 +2,7 @@
 var React = require('react');
 //actions
 var PhotosClientActions = require('../actions/PhotosClientActions');
+var UserClientActions = require('../actions/UserClientActions');
 //stores
 var PhotoStore = require('../stores/photosStore');
 
@@ -19,6 +20,8 @@ var fontHeight = 20;
 var fadeHeight = 50;
 var containerMinWidth = 300;
 var containerWidth;
+
+var currentUser;
 
 var getRatingWidth = function(rating){
   if(rating.toString().length>3){
@@ -89,31 +92,21 @@ var HomePage = React.createClass({
 
 
   _handleLogin: function(){
-    var _loggedIn;
+    _500px.getAuthorizationStatus(function (status) {
+      if(status === "authorized"){
+        currentUser = UserClientActions.fetchCurrentUser();
+        return <div className = "current-user-container">
+          <img className = "current-user-picture" src = {currentUser.userpic_url}></img>
+        </div>;
 
-    if(_loggedIn){
-      return <div> HI welcome</div>;
-
-    }else{
-      return <div>
-        <button onClick = {this.pxLogin}>Login</button>
-        <button onClick = {function(){
-
-          _500px.getAuthorizationStatus(function (res) {
-            console.log("res below");
-            console.log(res);
-          });
-
-
-
-          _500px.api('/photos/'+ this.state.photos[1].id +'/vote', 'post',{ id: this.state.photos[1].id, vote: 1 }, function (response) {
-            console.log(response);
-          });
-
-        }.bind(this)}>console.log</button>
-        <button onClick = {this.logout}>LogOut</button>
-      </div>;
-    }
+      }else{
+        return <div className = "login-button" onClick = {function(){
+            _500px.login();
+          }}>
+          Login
+        </div>;
+      }
+    });
   },
 
 
@@ -213,24 +206,31 @@ var HomePage = React.createClass({
                       style={{ "top": position[i][0]-edge-profilePictureSize, "left": edge+edge,
                         "height": profilePictureSize, "width": profilePictureSize}} src={photo.user.userpic_url}/>
 
-                      <div className = "author-username" onClick={function(){
-                    var win = window.open("https://500px.com/" + photo.user.username, '_blank'); win.focus();}}
-                     style={{ "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2), "left": edge+profilePictureSize+2*edge, "height": fontHeight}}>{photo.user.username}</div>
-
-
+                  <div className = "author-username" onClick={function(){
+                  var win = window.open("https://500px.com/" + photo.user.username, '_blank'); win.focus();}}
+                  style={{ "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2), "left": edge+profilePictureSize+2*edge, "height": fontHeight}}>{photo.user.username}</div>
 
                   <div className = "image-views" style={{ "left": edge+edge, "top": edge}}>
                     <i className="material-icons md-light space-right">&#xE417;</i>
                     {photo.times_viewed}
                   </div>
 
+                  <div className = "image-favorite" style={{ "left": edge+edge, "top": edge}}>
+                    <i className="material-icons md-light space-right">&#xE417;</i>
+                    {photo.times_viewed}
+                  </div>
+
+                  <div className = "image-collection" style={{ "left": edge+edge, "top": edge}}>
+                    <i class="material-icons md-light">&#xE39D;</i>
+                    {photo.times_viewed}
+                  </div>
+
+
                   <div className = "image-rating" style={{ "left": (position[i][1])-(edge*2)-getRatingWidth(photo.rating)-3, "top": edge, "width": getRatingWidth(photo.rating) }}>
                     <i className="material-icons md-light space-right">&#xE885;</i>
                     {photo.rating}
                   </div>
-
-              </div>
-
+                </div>
               </div>;
             }.bind(this))
           }

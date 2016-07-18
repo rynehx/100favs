@@ -1,0 +1,11 @@
+.current-user-container{
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+
+.current-user-picture{
+  width: 35px;
+  height: 35px;
+}
