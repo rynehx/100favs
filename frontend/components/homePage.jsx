@@ -109,11 +109,13 @@ var HomePage = React.createClass({
         <img className = "current-user-picture" src = {this.state.user.userpic_url}></img>
       </div>;
     }else{
-      return <div className = "login-button" onClick = {function(){
-          _500px.login();
+      return <button className = "login-button" onClick = {function(){
+          _500px.login(function(){
+            UserClientActions.fetchCurrentUser();
+          });
         }}>
         Login
-      </div>;
+      </button>;
     }
 
   },

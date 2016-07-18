@@ -25401,9 +25401,11 @@
 	      );
 	    } else {
 	      return React.createElement(
-	        'div',
+	        'button',
 	        { className: 'login-button', onClick: function () {
-	            _500px.login();
+	            _500px.login(function () {
+	              UserClientActions.fetchCurrentUser();
+	            });
 	          } },
 	        'Login'
 	      );
