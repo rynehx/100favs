@@ -1,0 +1,30 @@
+.colleciton-modal-frame{
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.collection-modal-left{
+  height: 100%;
+  width: 60%;
+  background-color: darkgrey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.collection-modal-right{
+  height: 100%;
+  width: 40%;
+}
+
+.collection-modal-image{
+  width: 95%;
+  height: auto;
+}
+
+.collection-modal-image-overlay{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}

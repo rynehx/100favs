@@ -6,6 +6,8 @@ var UserClientActions = require('../actions/UserClientActions');
 //stores
 var PhotoStore = require('../stores/photosStore');
 var UserStore = require('../stores/userStore');
+//components
+var CollectionModal = require('../components/modals/collectionModal');
 
 //image sizes
 var ImageSize = require('../util/imageSizes');
@@ -38,21 +40,24 @@ var getRatingWidth = function(rating){
 
 var HomePage = React.createClass({
   getInitialState: function () {
-    return { photos: [], loaded: false, user: undefined };
+    return { photos: [], loaded: false, user: undefined, galleries: [] };
+  },
+
+  componentWillMount: function(){
+    _500px.getAuthorizationStatus(function (status) {
+      if(status === "authorized"){
+        UserClientActions.fetchCurrentUser();
+        UserClientActions.fetchUserGalleries();
+      }
+    });
   },
 
   componentDidMount: function(){
     PhotosClientActions.fetchPopularPhotos(imageSize);
     this.popularPhotosListener = PhotoStore.addListener(this._onChange);
-    this.currentUser = UserStore.addListener(this._onChange);
-    _500px.getAuthorizationStatus(function (status) {
-      if(status === "authorized"){
-        UserClientActions.fetchCurrentUser();
-      }
-    });
-
+    this.currentUserListener = UserStore.addListener(this._onChange);
+    this.currentGalleryListener = UserStore.addListener(this._onChange);
     currentUser = UserClientActions.fetchCurrentUser();
-
     window.addEventListener('resize',function(){
       this.forceUpdate();
     }.bind(this));
@@ -60,11 +65,14 @@ var HomePage = React.createClass({
 
   componentWillUnmount: function(){
     this.popularPhotosListener.remove();
+    this.currentUserListener.remove();
+    this.currentGalleryListener.remove();
   },
 
   _onChange: function(){
     this.setState({user: UserStore.fetchCurrentUser()});
     this.setState({photos: PhotoStore.fetchPopularPhotos()});
+    this.setState({galleries: UserStore.fetchUserGalleries()});
   },
 
   componentDidUpdate: function(){ //the photos container width shrinks after the photos loaded
@@ -209,6 +217,7 @@ var HomePage = React.createClass({
                     if(!photo.nsfw){
                       var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
                       win.focus();}}}
+                      
                   style = {{"height" : position[i][0],
                     "width" : position[i][1]}}>
 
@@ -239,9 +248,8 @@ var HomePage = React.createClass({
                     {this.handleFavorite(photo)}
                   </div>
 
-                  <div className = "image-collection" style={{ "left": (position[i][1])-(edge*2)-50-3, "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2)}}>
-                    <i className="material-icons md-light space-right hyellow" onClick = {function(e){e.stopPropagation(); console.log("collection clicked")}}>&#xE02E;</i>
-                  </div>
+                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.state.galleries}/>
+
 
 
                   <div className = "image-rating" style={{ "left": (position[i][1])-(edge*2)-getRatingWidth(photo.rating)-3, "top": edge, "width": getRatingWidth(photo.rating) }}>

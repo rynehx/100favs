@@ -105,7 +105,11 @@
   visibility: visible;
   transform: translate3d(0px, -5px, 0px);
   transition: all 0.2s ease-in-out;
+}
+
+.image-wrapper:hover .collection-icon{
   opacity: 1;
+  transition: all 0.2s ease-in-out;
 }
 
 .author-photo{
@@ -169,11 +173,16 @@
 .image-favorite{
   position: absolute;
   display: flex;
+  visibility: hidden;
   opacity: 0;
 }
 
 .image-collection{
   position: absolute;
   display: flex;
+  visibility: hidden;
+}
+
+.collection-icon{
   opacity: 0;
 }

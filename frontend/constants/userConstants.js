@@ -1,3 +1,4 @@
 module.exports = {
-  fetchCurrentUser: "FETCHCURRENTUSER"
+  fetchCurrentUser: "FETCHCURRENTUSER",
+  fetchUserGalleries: "FETCHUSERGALLERIES"
 };

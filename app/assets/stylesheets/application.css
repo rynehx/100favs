@@ -34,7 +34,8 @@
    font-size: 100%;
    font: inherit;
    vertical-align: baseline;
-    list-style: none;
+   list-style: none;
+   outline:0;
  }
 
 .material-icons.md-light { color: rgba(255, 255, 255, 1); }
