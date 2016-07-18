@@ -98,8 +98,10 @@ var HomePage = React.createClass({
       return <div>
         <button onClick = {this.pxLogin}>Login</button>
         <button onClick = {function(){
+
             _500px.getAuthorizationStatus();
-            console.log(_500px)
+            // console.log(_500px)
+
           }}>console.log</button>
         <button onClick = {this.logout}>LogOut</button>
       </div>;
