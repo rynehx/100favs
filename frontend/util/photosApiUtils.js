@@ -23,6 +23,7 @@ module.exports = {
   unlikePhoto: function(photo, imageSize){
     _500px.api('/photos/' + photo.id + '/vote',"post", {id: photo.id, vote:0}, function(res){
       if(res.success){
+        console.log(res)
         this.fetchPopularPhotos(imageSize);
       }
     }.bind(this));
