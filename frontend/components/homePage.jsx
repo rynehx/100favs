@@ -15,7 +15,7 @@ var imageSize = 20;
 var imageHeight = parseInt(ImageSize[imageSize.toString()]);
 
 var edge = 5; //this is the space between the pictures
-var loaded = false;
+
 var profilePictureSize= 40;
 var fontHeight = 20;
 var fadeHeight = 50;
@@ -38,7 +38,7 @@ var getRatingWidth = function(rating){
 
 var HomePage = React.createClass({
   getInitialState: function () {
-    return { photos: [] };
+    return { photos: [], loaded: false, user: undefined };
   },
 
   componentDidMount: function(){
@@ -69,8 +69,8 @@ var HomePage = React.createClass({
 
   componentDidUpdate: function(){ //the photos container width shrinks after the photos loaded
     //this one time re-render sets the container to the original width;
-    if(!loaded){
-      loaded = true;
+    if(!this.state.loaded && this.state.photos.length>0){
+      this.state.loaded = true;
       this.forceUpdate();
     }
   },
@@ -103,7 +103,6 @@ var HomePage = React.createClass({
 
 
   _handleLogin: function(){
-    console.log(this.state.user);
     if(this.state.user){
       return <div className = "current-user-container">
         <img className = "current-user-picture" src = {this.state.user.userpic_url}></img>
@@ -120,6 +119,13 @@ var HomePage = React.createClass({
 
   },
 
+  handleFavorite: function(photo){
+    if(photo.liked){
+      return <i className="material-icons">favorite</i>;
+    }else{
+      return <i className="material-icons">favorite_border</i>;
+    }
+  },
 
   setPhotoPosition : function(){
 
@@ -226,14 +232,12 @@ var HomePage = React.createClass({
                     {photo.times_viewed}
                   </div>
 
-                  <div className = "image-favorite" style={{ "left": edge+edge, "top": edge}}>
-                    <i className="material-icons md-light space-right">&#xE417;</i>
-                    {photo.times_viewed}
+                  <div className = "image-favorite" style={{ "left": (position[i][1])-(edge*2)-20-3, "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2)}}>
+                    {this.handleFavorite(photo)}
                   </div>
 
-                  <div className = "image-collection" style={{ "left": edge+edge, "top": edge}}>
-                    <i class="material-icons md-light">&#xE39D;</i>
-                    {photo.times_viewed}
+                  <div className = "image-collection" style={{ "left": (position[i][1])-(edge*2)-50-3, "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2)}}>
+                    <i className="material-icons md-light space-right">&#xE02E;</i>
                   </div>
 
 

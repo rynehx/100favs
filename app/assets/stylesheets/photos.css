@@ -94,7 +94,19 @@
   opacity: 1;
 }
 
+.image-wrapper:hover .image-favorite{
+  visibility: visible;
+  transform: translate3d(0px, -5px, 0px);
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+}
 
+.image-wrapper:hover .image-collection{
+  visibility: visible;
+  transform: translate3d(0px, -5px, 0px);
+  transition: all 0.2s ease-in-out;
+  opacity: 1;
+}
 
 .author-photo{
   visibility: hidden;
@@ -153,4 +165,16 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+.image-favorite{
+  position: absolute;
+  display: flex;
+  opacity: 0;
+}
+
+.image-collection{
+  position: absolute;
+  display: flex;
+  opacity: 0;
 }

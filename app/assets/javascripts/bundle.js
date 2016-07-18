@@ -25298,7 +25298,7 @@
 	var imageHeight = parseInt(ImageSize[imageSize.toString()]);
 
 	var edge = 5; //this is the space between the pictures
-	var loaded = false;
+
 	var profilePictureSize = 40;
 	var fontHeight = 20;
 	var fadeHeight = 50;
@@ -25319,7 +25319,7 @@
 	  displayName: 'HomePage',
 
 	  getInitialState: function () {
-	    return { photos: [] };
+	    return { photos: [], loaded: false, user: undefined };
 	  },
 
 	  componentDidMount: function () {
@@ -25351,8 +25351,8 @@
 	  componentDidUpdate: function () {
 	    //the photos container width shrinks after the photos loaded
 	    //this one time re-render sets the container to the original width;
-	    if (!loaded) {
-	      loaded = true;
+	    if (!this.state.loaded && this.state.photos.length > 0) {
+	      this.state.loaded = true;
 	      this.forceUpdate();
 	    }
 	  },
@@ -25392,7 +25392,6 @@
 	  },
 
 	  _handleLogin: function () {
-	    console.log(this.state.user);
 	    if (this.state.user) {
 	      return React.createElement(
 	        'div',
@@ -25408,6 +25407,22 @@
 	            });
 	          } },
 	        'Login'
+	      );
+	    }
+	  },
+
+	  handleFavorite: function (photo) {
+	    if (photo.liked) {
+	      return React.createElement(
+	        'i',
+	        { className: 'material-icons' },
+	        'favorite'
+	      );
+	    } else {
+	      return React.createElement(
+	        'i',
+	        { className: 'material-icons' },
+	        'favorite_border'
 	      );
 	    }
 	  },
@@ -25525,23 +25540,17 @@
 	              ),
 	              React.createElement(
 	                'div',
-	                { className: 'image-favorite', style: { "left": edge + edge, "top": edge } },
-	                React.createElement(
-	                  'i',
-	                  { className: 'material-icons md-light space-right' },
-	                  ''
-	                ),
-	                photo.times_viewed
+	                { className: 'image-favorite', style: { "left": position[i][1] - edge * 2 - 20 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
+	                this.handleFavorite(photo)
 	              ),
 	              React.createElement(
 	                'div',
-	                { className: 'image-collection', style: { "left": edge + edge, "top": edge } },
+	                { className: 'image-collection', style: { "left": position[i][1] - edge * 2 - 50 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
 	                React.createElement(
 	                  'i',
-	                  { 'class': 'material-icons md-light' },
-	                  ''
-	                ),
-	                photo.times_viewed
+	                  { className: 'material-icons md-light space-right' },
+	                  ''
+	                )
 	              ),
 	              React.createElement(
 	                'div',
@@ -25587,7 +25596,7 @@
 	module.exports = {
 	  fetchPopularPhotos: function (size) {
 
-	    _500px.api('/photos', { feature: 'popular', rpp: 100, image_size: size, sort: 'rating' }, function (response) {
+	    _500px.api('/photos', { feature: 'popular', rpp: 100, image_size: size, sort: 'rating', include_states: 1 }, function (response) {
 	      Dispatcher.dispatch({
 	        actionType: PhotoConstants.fetchPopularPhotos,
 	        items: response.data.photos
