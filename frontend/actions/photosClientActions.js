@@ -1,9 +1,9 @@
 var PhotoApiUtils = require('../util/photosApiUtils');
-var UserApiUtils = require('../util/userApiUtils');
 
 var PhotosClientActions = {
   fetchPopularPhotos: PhotoApiUtils.fetchPopularPhotos,
-  fetchCurrentUser: UserApiUtils.fetchCurrentUser
+  likePhoto: PhotoApiUtils.likePhoto,
+  unlikePhoto: PhotoApiUtils.unlikePhoto
 };
 
 module.exports = PhotosClientActions;

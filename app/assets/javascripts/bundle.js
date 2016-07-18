@@ -25415,13 +25415,13 @@
 	    if (photo.liked) {
 	      return React.createElement(
 	        'i',
-	        { className: 'material-icons' },
+	        { className: 'material-icons hred' },
 	        'favorite'
 	      );
 	    } else {
 	      return React.createElement(
 	        'i',
-	        { className: 'material-icons' },
+	        { className: 'material-icons hred' },
 	        'favorite_border'
 	      );
 	    }
@@ -25548,7 +25548,7 @@
 	                { className: 'image-collection', style: { "left": position[i][1] - edge * 2 - 50 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
 	                React.createElement(
 	                  'i',
-	                  { className: 'material-icons md-light space-right' },
+	                  { className: 'material-icons md-light space-right hyellow' },
 	                  ''
 	                )
 	              ),
@@ -25595,7 +25595,6 @@
 
 	module.exports = {
 	  fetchPopularPhotos: function (size) {
-
 	    _500px.api('/photos', { feature: 'popular', rpp: 100, image_size: size, sort: 'rating', include_states: 1 }, function (response) {
 	      Dispatcher.dispatch({
 	        actionType: PhotoConstants.fetchPopularPhotos,

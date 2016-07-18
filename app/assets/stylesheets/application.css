@@ -36,9 +36,18 @@
    vertical-align: baseline;
     list-style: none;
  }
- 
+
 .material-icons.md-light { color: rgba(255, 255, 255, 1); }
 
 .space-right{
   margin-right: 3px;
+}
+
+
+.hred:hover {
+  color: red;
+}
+
+.hyellow:hover {
+  color: yellow;
 }
