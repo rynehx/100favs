@@ -14,6 +14,7 @@ UserStore.recieveCurrentUser = function(user){
 };
 
 UserStore.recieveUserGalleries = function(data){
+  console.log(data);
   galleries = data;
   this.__emitChange();
 };
