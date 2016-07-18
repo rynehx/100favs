@@ -21,7 +21,7 @@ module.exports = {
   },
 
   unlikePhoto: function(photo, imageSize){
-    _500px.api('/photos/' + photo.id + '/vote',"post", {id: photo.id, vote:0}, function(res){
+    _500px.api('/photos/' + photo.id + '/vote',"delete", {id: photo.id}, function(res){
       console.log(res)
       if(res.success){
         console.log(res)
