@@ -5,7 +5,7 @@ var GalleryApiUtils = {
   fetchUserGalleries: function(user){
 
       _500px.api('users/' + user.id + '/galleries',{rpp: 100, sort: 'last_added_to_at', include_cover: 1}, function (response) {
-        console.log()
+        console.log(response)
           Dispatcher.dispatch({
             actionType: GalleryConstants.fetchUserGalleries,
             items: response.data.galleries
