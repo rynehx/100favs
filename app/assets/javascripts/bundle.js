@@ -25405,10 +25405,10 @@
 	              // });
 
 	              _500px.ensureAuthorization(function (res) {
-	                console.log(res);
+	                console.log("inside");
 	              });
 
-	              // 
+	              //
 	              // _500px.api('/photos/'+ this.state.photos[1].id +'/vote', 'post',{ id: this.state.photos[1].id, vote: 1 }, function (response) {
 	              //   console.log(response);
 	              // });
