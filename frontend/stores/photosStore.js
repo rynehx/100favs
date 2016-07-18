@@ -14,13 +14,17 @@ PhotoStore.recievePopularPhotos = function(items){
         photo.show=true;
     }
   });
-  popular = items; 
+  popular = items;
   this.__emitChange();
 };
 
 
 PhotoStore.fetchPopularPhotos = function(){
   return popular;
+};
+
+PhotoStore.recieveUpdatedPhoto = function(){
+  this.__emitChange();
 };
 
 
@@ -30,6 +34,8 @@ PhotoStore.__onDispatch = function(payload){
     case PhotoConstants.fetchPopularPhotos:
     PhotoStore.recievePopularPhotos(payload.items);
     break;
+    case PhotoConstants.updatePhoto:
+    PhotoStore.recieveUpdatedPhoto(payload.items);
   }
 };
 

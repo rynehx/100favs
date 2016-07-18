@@ -12,20 +12,26 @@ module.exports = {
     });
   },
 
-  likePhoto: function(photo, imageSize){
-    _500px.api('/photos/' + photo.id + '/vote',"post", {id: photo.id, vote:1}, function(res){
-      if(res.success){
-        this.fetchPopularPhotos(imageSize);
+  likePhoto: function(photo){//dont use refetch cuz it may fetch new photos, instead use re check or force update
+    _500px.api('/photos/' + photo.id + '/vote',"post", {id: photo.id, vote:1}, function(response){
+      if(response.success){
+        photo.liked = true;
+        Dispatcher.dispatch({
+          actionType: PhotoConstants.fetchPopularPhotos,
+          items: response.data.photos
+        });
       }
     }.bind(this));
   },
 
-  unlikePhoto: function(photo, imageSize){
-    _500px.api('/photos/' + photo.id + '/vote',"delete", {id: photo.id}, function(res){
-      console.log(res)
-      if(res.success){
-        console.log(res)
-        this.fetchPopularPhotos(imageSize);
+  unlikePhoto: function(photo){
+    _500px.api('/photos/' + photo.id + '/vote',"delete", {id: photo.id}, function(response){
+      if(response.success){
+        photo.liked = false;
+        Dispatcher.dispatch({
+          actionType: PhotoConstants.fetchPopularPhotos,
+          items: response.data.photos
+        });
       }
     }.bind(this));
   }

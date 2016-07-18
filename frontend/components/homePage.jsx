@@ -122,11 +122,11 @@ var HomePage = React.createClass({
   handleFavorite: function(photo){
     if(photo.liked){//photo is liked, click is unlike action
       return <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
-          PhotosClientActions.unlikePhoto(photo, imageSize);
+          PhotosClientActions.unlikePhoto(photo);
         }}>favorite</i>;
     }else{//photo is not liked, click is like action
       return <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
-          PhotosClientActions.likePhoto(photo, imageSize);}}>favorite_border</i>;
+          PhotosClientActions.likePhoto(photo);}}>favorite_border</i>;
     }
   },
 
