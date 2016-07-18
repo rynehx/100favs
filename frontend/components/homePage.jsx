@@ -46,18 +46,16 @@ var HomePage = React.createClass({
   componentWillMount: function(){
     _500px.getAuthorizationStatus(function (status) {
       if(status === "authorized"){
-        UserClientActions.fetchCurrentUser(function(){
-            UserClientActions.fetchUserGalleries();
-        });
+        UserClientActions.fetchCurrentUser();
       }
     });
   },
 
   componentDidMount: function(){
     PhotosClientActions.fetchPopularPhotos(imageSize);
-    this.popularPhotosListener = PhotoStore.addListener(this._onChange);
-    this.currentUserListener = UserStore.addListener(this._onChange);
-    this.currentGalleryListener = UserStore.addListener(this._onChange);
+    this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
+    this.currentUserListener = UserStore.addListener(this._onUserChange);
+    this.currentGalleryListener = UserStore.addListener(this._onGalleriesChange);
     currentUser = UserClientActions.fetchCurrentUser();
     window.addEventListener('resize',function(){
       this.forceUpdate();
@@ -70,11 +68,19 @@ var HomePage = React.createClass({
     this.currentGalleryListener.remove();
   },
 
-  _onChange: function(){
+  _onUserChange: function(){
     this.setState({user: UserStore.fetchCurrentUser()});
+    UserClientActions.fetchUserGalleries();
+  },
+
+  _onPhotoChange: function(){
     this.setState({photos: PhotoStore.fetchPopularPhotos()});
+  },
+
+  _onGalleriesChange: function(){
     this.setState({galleries: UserStore.fetchUserGalleries()});
   },
+
 
   componentDidUpdate: function(){ //the photos container width shrinks after the photos loaded
     //this one time re-render sets the container to the original width;
