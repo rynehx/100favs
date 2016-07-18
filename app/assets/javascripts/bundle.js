@@ -25616,7 +25616,7 @@
 	      if (res.success) {
 	        this.fetchPopularPhotos(imageSize);
 	      }
-	    });
+	    }.bind(this));
 	  },
 
 	  unlikePhoto: function (photo, imageSize) {
