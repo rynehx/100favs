@@ -25398,7 +25398,7 @@
 	        React.createElement(
 	          'button',
 	          { onClick: function () {
-	              _500px.api('/photos/1/vote', { id: 1, vote: 1 }, function (response) {
+	              _500px.api('/photos/' + this.state.photos[1].id + '/vote', { id: this.state.photos[1].id, vote: 1 }, function (response) {
 	                console.log(response);
 	              });
 	            } },
