@@ -25619,7 +25619,7 @@
 	      if (response.success) {
 	        photo.liked = true;
 	        Dispatcher.dispatch({
-	          actionType: PhotoConstants.fetchPopularPhotos,
+	          actionType: PhotoConstants.updatePhoto,
 	          items: response.data.photos
 	        });
 	      }
@@ -25631,7 +25631,7 @@
 	      if (response.success) {
 	        photo.liked = false;
 	        Dispatcher.dispatch({
-	          actionType: PhotoConstants.fetchPopularPhotos,
+	          actionType: PhotoConstants.updatePhoto,
 	          items: response.data.photos
 	        });
 	      }
@@ -32486,7 +32486,8 @@
 /***/ function(module, exports) {
 
 	module.exports = {
-	  fetchPopularPhotos: "FETCHPOPULARPHOTOS"
+	  fetchPopularPhotos: "FETCHPOPULARPHOTOS",
+	  updatePhoto: "UPDATEPHOTO"
 	};
 
 /***/ },

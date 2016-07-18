@@ -17,7 +17,7 @@ module.exports = {
       if(response.success){
         photo.liked = true;
         Dispatcher.dispatch({
-          actionType: PhotoConstants.fetchPopularPhotos,
+          actionType: PhotoConstants.updatePhoto,
           items: response.data.photos
         });
       }
@@ -29,7 +29,7 @@ module.exports = {
       if(response.success){
         photo.liked = false;
         Dispatcher.dispatch({
-          actionType: PhotoConstants.fetchPopularPhotos,
+          actionType: PhotoConstants.updatePhoto,
           items: response.data.photos
         });
       }

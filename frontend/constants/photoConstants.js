@@ -1,3 +1,4 @@
 module.exports = {
-  fetchPopularPhotos: "FETCHPOPULARPHOTOS"
+  fetchPopularPhotos: "FETCHPOPULARPHOTOS",
+  updatePhoto: "UPDATEPHOTO"
 };
