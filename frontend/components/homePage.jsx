@@ -102,7 +102,7 @@ var HomePage = React.createClass({
             console.log(response);
           });
 
-          }}>console.log</button>
+        }.bind(this)}>console.log</button>
         <button onClick = {this.logout}>LogOut</button>
       </div>;
     }

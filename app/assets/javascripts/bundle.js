@@ -25401,7 +25401,7 @@
 	              _500px.api('/photos/' + this.state.photos[1].id + '/vote', { id: this.state.photos[1].id, vote: 1 }, function (response) {
 	                console.log(response);
 	              });
-	            } },
+	            }.bind(this) },
 	          'console.log'
 	        ),
 	        React.createElement(
