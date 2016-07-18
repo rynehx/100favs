@@ -121,9 +121,12 @@ var HomePage = React.createClass({
 
   handleFavorite: function(photo){
     if(photo.liked){//photo is liked, click is unlike action
-      return <i className="material-icons hred" onClick = {function(){PhotosClientActions.unlikePhoto(photo, imageSize);}}>favorite</i>;
+      return <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
+          PhotosClientActions.unlikePhoto(photo, imageSize);
+        }}>favorite</i>;
     }else{//photo is not liked, click is like action
-      return <i className="material-icons hred" onClick = {function(){PhotosClientActions.likePhoto(photo, imageSize);}}>favorite_border</i>;
+      return <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
+          PhotosClientActions.likePhoto(photo, imageSize);}}>favorite_border</i>;
     }
   },
 
@@ -237,7 +240,7 @@ var HomePage = React.createClass({
                   </div>
 
                   <div className = "image-collection" style={{ "left": (position[i][1])-(edge*2)-50-3, "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2)}}>
-                    <i className="material-icons md-light space-right hyellow" onClick = {function(){console.log("collection clicked")}}>&#xE02E;</i>
+                    <i className="material-icons md-light space-right hyellow" onClick = {function(e){e.stopPropagation(); console.log("collection clicked")}}>&#xE02E;</i>
                   </div>
 
 

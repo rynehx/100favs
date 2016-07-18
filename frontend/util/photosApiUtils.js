@@ -25,7 +25,7 @@ module.exports = {
       if(res.success){
         this.fetchPopularPhotos(imageSize);
       }
-    });
+    }.bind(this));
   }
 
 };

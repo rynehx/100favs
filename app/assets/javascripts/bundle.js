@@ -25416,7 +25416,8 @@
 	      //photo is liked, click is unlike action
 	      return React.createElement(
 	        'i',
-	        { className: 'material-icons hred', onClick: function () {
+	        { className: 'material-icons hred', onClick: function (e) {
+	            e.stopPropagation();
 	            PhotosClientActions.unlikePhoto(photo, imageSize);
 	          } },
 	        'favorite'
@@ -25425,7 +25426,8 @@
 	      //photo is not liked, click is like action
 	      return React.createElement(
 	        'i',
-	        { className: 'material-icons hred', onClick: function () {
+	        { className: 'material-icons hred', onClick: function (e) {
+	            e.stopPropagation();
 	            PhotosClientActions.likePhoto(photo, imageSize);
 	          } },
 	        'favorite_border'
@@ -25554,8 +25556,8 @@
 	                { className: 'image-collection', style: { "left": position[i][1] - edge * 2 - 50 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
 	                React.createElement(
 	                  'i',
-	                  { className: 'material-icons md-light space-right hyellow', onClick: function () {
-	                      console.log("collection clicked");
+	                  { className: 'material-icons md-light space-right hyellow', onClick: function (e) {
+	                      e.stopPropagation();console.log("collection clicked");
 	                    } },
 	                  ''
 	                )
@@ -25624,7 +25626,7 @@
 	      if (res.success) {
 	        this.fetchPopularPhotos(imageSize);
 	      }
-	    });
+	    }.bind(this));
 	  }
 
 	};
