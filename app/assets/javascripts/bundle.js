@@ -25400,13 +25400,9 @@
 	          { onClick: function () {
 
 	              _500px.getAuthorizationStatus(function (res) {
+	                console.log("res below");
 	                console.log(res);
 	              });
-
-	              // _500px.ensureAuthorization(function(res){
-	              //   console.log(res);
-	              // });
-	              console.log(this.state.photos[1].id);
 
 	              _500px.api('/photos/' + this.state.photos[1].id + '/vote', 'post', { id: this.state.photos[1].id, vote: 1 }, function (response) {
 	                console.log(response);
