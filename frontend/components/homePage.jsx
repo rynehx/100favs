@@ -105,7 +105,7 @@ var HomePage = React.createClass({
           // });
 
           _500px.ensureAuthorization(function(res){
-            console.log("inside");
+            console.log("res");
           });
 
           //
