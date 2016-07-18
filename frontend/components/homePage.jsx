@@ -46,8 +46,9 @@ var HomePage = React.createClass({
   componentWillMount: function(){
     _500px.getAuthorizationStatus(function (status) {
       if(status === "authorized"){
-        UserClientActions.fetchCurrentUser();
-        UserClientActions.fetchUserGalleries();
+        UserClientActions.fetchCurrentUser(function(){
+            UserClientActions.fetchUserGalleries();
+        });
       }
     });
   },
@@ -217,7 +218,7 @@ var HomePage = React.createClass({
                     if(!photo.nsfw){
                       var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
                       win.focus();}}}
-                      
+
                   style = {{"height" : position[i][0],
                     "width" : position[i][1]}}>
 

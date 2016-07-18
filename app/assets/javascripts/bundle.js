@@ -25327,8 +25327,9 @@
 	  componentWillMount: function () {
 	    _500px.getAuthorizationStatus(function (status) {
 	      if (status === "authorized") {
-	        UserClientActions.fetchCurrentUser();
-	        UserClientActions.fetchUserGalleries();
+	        UserClientActions.fetchCurrentUser(function () {
+	          UserClientActions.fetchUserGalleries();
+	        });
 	      }
 	    });
 	  },
@@ -25984,12 +25985,13 @@
 	var UserConstants = __webpack_require__(231);
 
 	module.exports = {
-	  fetchCurrentUser: function () {
+	  fetchCurrentUser: function (callback) {
 	    _500px.api('/users', {}, function (response) {
 	      Dispatcher.dispatch({
 	        actionType: UserConstants.fetchCurrentUser,
 	        items: response.data.user
 	      });
+	      callback();
 	    });
 	  },
 
