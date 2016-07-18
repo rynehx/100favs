@@ -13,18 +13,9 @@ UserStore.recieveCurrentUser = function(user){
   this.__emitChange();
 };
 
-UserStore.recieveUserGalleries = function(data){
-  console.log(data);
-  galleries = data;
-  this.__emitChange();
-};
 
 UserStore.fetchCurrentUser = function(){
   return currentUser;
-};
-
-UserStore.fetchUserGalleries = function(){
-  return galleries;
 };
 
 

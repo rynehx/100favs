@@ -10,7 +10,12 @@ var galleries = [];
 
 
 GalleryStore.recieveUserGalleries = function(data){
-  galleries = data;
+  if(data){
+    galleries = data;
+  }else{
+    galleries = [];
+  }
+
   this.__emitChange();
 };
 

@@ -82,7 +82,7 @@ var HomePage = React.createClass({
   },
 
   _onGalleriesChange: function(){
-    this.setState({galleries: UserStore.fetchUserGalleries()});
+    this.setState({galleries: GalleryStore.fetchUserGalleries()});
   },
 
 

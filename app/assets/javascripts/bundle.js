@@ -25362,7 +25362,7 @@
 	  },
 
 	  _onGalleriesChange: function () {
-	    this.setState({ galleries: UserStore.fetchUserGalleries() });
+	    this.setState({ galleries: GalleryStore.fetchUserGalleries() });
 	  },
 
 	  componentDidUpdate: function () {
@@ -32518,18 +32518,8 @@
 	  this.__emitChange();
 	};
 
-	UserStore.recieveUserGalleries = function (data) {
-	  console.log(data);
-	  galleries = data;
-	  this.__emitChange();
-	};
-
 	UserStore.fetchCurrentUser = function () {
 	  return currentUser;
-	};
-
-	UserStore.fetchUserGalleries = function () {
-	  return galleries;
 	};
 
 	UserStore.__onDispatch = function (payload) {
@@ -32638,7 +32628,17 @@
 	          React.createElement(
 	            'div',
 	            { className: 'collection-modal-right' },
-	            React.createElement('ul', { className: 'collections-container' })
+	            React.createElement(
+	              'ul',
+	              { className: 'collections-container' },
+	              this.props.galleries.map(function (gallery) {
+	                return React.createElement(
+	                  'li',
+	                  { className: 'gallery-item' },
+	                  React.createElement('img', { className: 'gallery-cover', src: gallery.cover_photo[0].url })
+	                );
+	              })
+	            )
 	          )
 	        )
 	      )
@@ -34861,9 +34861,7 @@
 
 	var GalleryApiUtils = {
 	  fetchUserGalleries: function (user) {
-	    console.log(user);
 	    _500px.api('/users/' + user.id + '/galleries', { rpp: 100, sort: 'last_added_to_at', include_cover: 1 }, function (response) {
-	      console.log(response);
 	      Dispatcher.dispatch({
 	        actionType: GalleryConstants.fetchUserGalleries,
 	        items: response.data.galleries
@@ -34896,7 +34894,12 @@
 	var galleries = [];
 
 	GalleryStore.recieveUserGalleries = function (data) {
-	  galleries = data;
+	  if (data) {
+	    galleries = data;
+	  } else {
+	    galleries = [];
+	  }
+
 	  this.__emitChange();
 	};
 

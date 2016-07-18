@@ -28,3 +28,20 @@
   width: 100%;
   height: 100%;
 }
+
+.collections-container{
+  overflow: scroll;
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-item{
+  width: 100%;
+  display: flex;
+  height: 35px;
+}
+
+.gallery-cover{
+  height: 35px;
+  width: 35px;
+}

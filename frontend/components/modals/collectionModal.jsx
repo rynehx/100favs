@@ -68,7 +68,7 @@ var collectionModal = React.createClass({
 
 
     render: function(){
-    
+
 
       return (
          <div className = "image-collection" style={{ "left": (this.props.position[1])-(this.props.edge*2)-50-3, "top": (this.props.position[0]-this.props.edge)-(this.props.fontHeight/2)-(this.props.profilePictureSize/2)}}>
@@ -85,7 +85,11 @@ var collectionModal = React.createClass({
                  </div>
                  <div className="collection-modal-right">
                     <ul className = "collections-container">
-
+                      {this.props.galleries.map(function(gallery){
+                        return <li className = "gallery-item">
+                          <img className = "gallery-cover" src={gallery.cover_photo[0].url} />
+                        </li>;
+                      })}
                     </ul>
                  </div>
                </div>
