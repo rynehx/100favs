@@ -25405,7 +25405,7 @@
 	              // });
 
 	              _500px.ensureAuthorization(function (res) {
-	                console.log("res");
+	                console.log(res);
 	              });
 
 	              //
