@@ -284,6 +284,7 @@
       };
 
       iframe_element.src = site_url + 'api/js-sdk/check_authorization?sdk_key=' + this.sdk_key + '&callback=' + callback_function_name;
+      console.log("hi")
       container.appendChild(iframe_element);
     };
 
