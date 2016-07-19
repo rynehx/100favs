@@ -34892,8 +34892,7 @@
 	  postToGallery: function (user, gallery, photo) {
 	    console.log(user, gallery, photo);
 	    console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
-	    _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', 'put', { add: { "after": { "id": null }, "photos": [photo.id] } }, function (response) {
-
+	    _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', 'put', { add: {} }, function (response) {
 	      console.log(response);
 	      // Dispatcher.dispatch({
 	      //   actionType: GalleryConstants.fetchUserGalleries,
@@ -34905,6 +34904,7 @@
 	};
 
 	module.exports = GalleryApiUtils;
+	//{'after': { 'id': null }, 'photos': [ photo.id ]}
 
 /***/ },
 /* 279 */
