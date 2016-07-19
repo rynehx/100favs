@@ -15,12 +15,12 @@ var GalleryApiUtils = {
     },
 
     postToGallery: function(user, gallery, photo){
-      console.log(user, gallery, photo);
-      console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
       _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items','put', {add: {'after': { 'id': null }, 'photos': [ photo.id ]}},
       function (response) {
         if(response.data[(photo.id)+""].result === "added"){
+
           NotificationClientActions.addNotification({action: "add",item1: photo, item2: gallery});
+          
         }
       });
     }

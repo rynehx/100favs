@@ -17,7 +17,11 @@ var notifications = [];
 NotificationStore.addNotification = function(item){
 //photo url, photo name  "added to " gallery url gallery name;
   var newNotification = new Notificaton(notificationIdx, item);
-  newNotification.startTimer();
+
+
+  window.setTimeout(function(){
+    newNotification.startTimer();
+  }, 0);
   notifications.push(newNotification);
   this.__emitChange();
 };

@@ -25795,10 +25795,9 @@
 	  },
 
 	  postToGallery: function (user, gallery, photo) {
-	    console.log(user, gallery, photo);
-	    console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
 	    _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', 'put', { add: { 'after': { 'id': null }, 'photos': [photo.id] } }, function (response) {
 	      if (response.data[photo.id + ""].result === "added") {
+
 	        NotificationClientActions.addNotification({ action: "add", item1: photo, item2: gallery });
 	      }
 	    });
@@ -35278,7 +35277,10 @@
 	NotificationStore.addNotification = function (item) {
 	  //photo url, photo name  "added to " gallery url gallery name;
 	  var newNotification = new Notificaton(notificationIdx, item);
-	  newNotification.startTimer();
+
+	  window.setTimeout(function () {
+	    newNotification.startTimer();
+	  }, 0);
 	  notifications.push(newNotification);
 	  this.__emitChange();
 	};
