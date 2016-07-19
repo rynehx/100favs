@@ -79,15 +79,37 @@ var HomePage = React.createClass({
     }
   },
 
-  handleFavorite: function(photo){
-    if(photo.liked){//photo is liked, click is unlike action
-      return <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
-          PhotosClientActions.unlikePhoto(photo);
-        }}>favorite</i>;
-    }else{//photo is not liked, click is like action
-      return <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
-          PhotosClientActions.likePhoto(photo);}}>favorite_border</i>;
+  handleFavorite: function(position, photo){
+    if(this.props.user){
+      var icon;
+      if(photo.liked){//photo is liked, click is unlike action
+        icon =  <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
+            PhotosClientActions.unlikePhoto(photo);
+          }}>favorite</i>;
+      }else{//photo is not liked, click is like action
+        icon =  <i className="material-icons hred" onClick = {function(e){ e.stopPropagation();
+            PhotosClientActions.likePhoto(photo);}}>favorite_border</i>;
+      }
+
+      return <div className = "image-favorite" style={{ "left": (position[1])-(edge*2)-20-3,
+        "top": (position[0]-edge)-(fontHeight/2)-(profilePictureSize/2)}}>
+          {icon}
+      </div>;
+    }else{
+      return <div></div>;
     }
+
+  },
+
+  handleCollection: function(position, photo){
+    if(this.props.user){
+      return <CollectionModal position = {position} edge = {edge} fontHeight = {fontHeight}
+        user = {this.props.user} profilePictureSize = {profilePictureSize}
+        photo = {photo} galleries = {this.props.galleries}/>;
+    }else{
+      return <div></div>;
+    }
+
   },
 
   setPhotoPosition : function(){
@@ -191,15 +213,8 @@ var HomePage = React.createClass({
                     <i className="material-icons md-light space-right">&#xE417;</i>
                     {photo.times_viewed}
                   </div>
-
-                  <div className = "image-favorite" style={{ "left": (position[i][1])-(edge*2)-20-3, "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2)}}>
-                    {this.handleFavorite(photo)}
-                  </div>
-
-                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} user = {this.props.user} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.props.galleries}/>
-
-
-
+                    {this.handleFavorite(position, photo)}
+                    {this.handleCollection(position, photo)}
                   <div className = "image-rating" style={{ "left": (position[i][1])-(edge*2)-getRatingWidth(photo.rating)-3, "top": edge, "width": getRatingWidth(photo.rating) }}>
                     <i className="material-icons md-light space-right">&#xE885;</i>
                     {photo.rating}

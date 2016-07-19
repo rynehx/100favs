@@ -32494,27 +32494,49 @@
 	    }
 	  },
 
-	  handleFavorite: function (photo) {
-	    if (photo.liked) {
-	      //photo is liked, click is unlike action
+	  handleFavorite: function (position, photo) {
+	    if (this.props.user) {
+	      var icon;
+	      if (photo.liked) {
+	        //photo is liked, click is unlike action
+	        icon = React.createElement(
+	          'i',
+	          { className: 'material-icons hred', onClick: function (e) {
+	              e.stopPropagation();
+	              PhotosClientActions.unlikePhoto(photo);
+	            } },
+	          'favorite'
+	        );
+	      } else {
+	        //photo is not liked, click is like action
+	        icon = React.createElement(
+	          'i',
+	          { className: 'material-icons hred', onClick: function (e) {
+	              e.stopPropagation();
+	              PhotosClientActions.likePhoto(photo);
+	            } },
+	          'favorite_border'
+	        );
+	      }
+
 	      return React.createElement(
-	        'i',
-	        { className: 'material-icons hred', onClick: function (e) {
-	            e.stopPropagation();
-	            PhotosClientActions.unlikePhoto(photo);
-	          } },
-	        'favorite'
+	        'div',
+	        { className: 'image-favorite', style: { "left": position[1] - edge * 2 - 20 - 3,
+	            "top": position[0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
+	        icon
 	      );
 	    } else {
-	      //photo is not liked, click is like action
-	      return React.createElement(
-	        'i',
-	        { className: 'material-icons hred', onClick: function (e) {
-	            e.stopPropagation();
-	            PhotosClientActions.likePhoto(photo);
-	          } },
-	        'favorite_border'
-	      );
+	      return React.createElement('div', null);
+	    }
+	  },
+
+	  handleCollection: function (position, photo) {
+	    if (this.props.user) {
+	      return React.createElement(CollectionModal, { position: position, edge: edge, fontHeight: fontHeight,
+	        user: this.props.user, profilePictureSize: profilePictureSize,
+	        photo: photo, galleries: this.props.galleries });
+	    } else {
+	      return React.createElement('div', null);
 	    }
 	  },
 
@@ -32631,12 +32653,8 @@
 	                ),
 	                photo.times_viewed
 	              ),
-	              React.createElement(
-	                'div',
-	                { className: 'image-favorite', style: { "left": position[i][1] - edge * 2 - 20 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
-	                this.handleFavorite(photo)
-	              ),
-	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.props.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.props.galleries }),
+	              this.handleFavorite(position, photo),
+	              this.handleCollection(position, photo),
 	              React.createElement(
 	                'div',
 	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
@@ -35110,7 +35128,6 @@
 	  },
 
 	  componentWillReceiveProps: function (newprops) {
-	    console.log(this.state.user);
 	    var category = tabsToSearch[(newprops.params.tabType ? newprops.params.tabType : "popular").toLowerCase()];
 
 	    if (category === "user_friends") {

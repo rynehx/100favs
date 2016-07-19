@@ -118,7 +118,6 @@ var PhotoContent = React.createClass({
 
 
   componentWillReceiveProps: function(newprops){
-    console.log(this.state.user)
     var category = tabsToSearch[(newprops.params.tabType ? newprops.params.tabType : "popular").toLowerCase()];
 
     if(category==="user_friends"){
