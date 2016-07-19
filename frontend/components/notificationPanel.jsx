@@ -60,8 +60,8 @@ var NotificationPanel = React.createClass({
     return (
       <div className = "notification-panel">
         <ul className = "notification-list">
-          {this.state.notifications.map(function(n,i){
-            return this._handleNotification();
+          {this.state.notifications.map(function(n){
+            return this._handleNotification(n);
           }.bind(this))}
         </ul>
       </div>
