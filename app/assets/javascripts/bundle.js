@@ -32653,8 +32653,8 @@
 	                ),
 	                photo.times_viewed
 	              ),
-	              this.handleFavorite(position, photo),
-	              this.handleCollection(position, photo),
+	              this.handleFavorite(position[i], photo),
+	              this.handleCollection(position[i], photo),
 	              React.createElement(
 	                'div',
 	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },

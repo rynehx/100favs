@@ -213,8 +213,8 @@ var HomePage = React.createClass({
                     <i className="material-icons md-light space-right">&#xE417;</i>
                     {photo.times_viewed}
                   </div>
-                    {this.handleFavorite(position, photo)}
-                    {this.handleCollection(position, photo)}
+                    {this.handleFavorite(position[i], photo)}
+                    {this.handleCollection(position[i], photo)}
                   <div className = "image-rating" style={{ "left": (position[i][1])-(edge*2)-getRatingWidth(photo.rating)-3, "top": edge, "width": getRatingWidth(photo.rating) }}>
                     <i className="material-icons md-light space-right">&#xE885;</i>
                     {photo.rating}
