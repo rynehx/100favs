@@ -52,3 +52,7 @@
 .hyellow:hover {
   color: yellow;
 }
+
+.ReactModal__Body--open{
+  overflow-y: hidden;
+}

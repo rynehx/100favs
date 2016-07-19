@@ -82,9 +82,7 @@ var collectionModal = React.createClass({
                <div className = "collection-modal-frame">
                  <div className = "collection-modal-left">
                    <div className = "collection-modal-image-overlay"></div>
-                   <div className = "gallery-cover-container">
-                     <img className = "collection-modal-image" src = {this.props.photo.image_url}></img>
-                   </div>
+                   <img className = "collection-modal-image" src = {this.props.photo.image_url}></img>
                  </div>
                  <div className="collection-modal-right">
                     <ul className = "collections-container">
@@ -93,7 +91,9 @@ var collectionModal = React.createClass({
                           onClick = {function(){
                             GalleryClientActions.postToGallery(this.props.user, gallery, this.props.photo)
                           }.bind(this)}>
-                          <img className = "gallery-cover" src={gallery.cover_photo[0].url} />
+                          <div className = "gallery-cover-container">
+                            <img className = "gallery-cover" src={gallery.cover_photo[0].url} />
+                          </div>
                           <div className = "add-gallery-button">
                             <i className = "material-icons md-48 add-gallery-icon">&#xE146;</i>
                             <div className = "add-gallery-text">{gallery.name}</div>

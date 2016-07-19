@@ -32716,11 +32716,7 @@
 	            'div',
 	            { className: 'collection-modal-left' },
 	            React.createElement('div', { className: 'collection-modal-image-overlay' }),
-	            React.createElement(
-	              'div',
-	              { className: 'gallery-cover-container' },
-	              React.createElement('img', { className: 'collection-modal-image', src: this.props.photo.image_url })
-	            )
+	            React.createElement('img', { className: 'collection-modal-image', src: this.props.photo.image_url })
 	          ),
 	          React.createElement(
 	            'div',
@@ -32735,7 +32731,11 @@
 	                    onClick: function () {
 	                      GalleryClientActions.postToGallery(this.props.user, gallery, this.props.photo);
 	                    }.bind(this) },
-	                  React.createElement('img', { className: 'gallery-cover', src: gallery.cover_photo[0].url }),
+	                  React.createElement(
+	                    'div',
+	                    { className: 'gallery-cover-container' },
+	                    React.createElement('img', { className: 'gallery-cover', src: gallery.cover_photo[0].url })
+	                  ),
 	                  React.createElement(
 	                    'div',
 	                    { className: 'add-gallery-button' },
