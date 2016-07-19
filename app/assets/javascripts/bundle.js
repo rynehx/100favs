@@ -25380,6 +25380,7 @@
 	          actionType: PhotoConstants.updatePhoto,
 	          items: response.data.photos
 	        });
+	        window.setTimeout(NotificationClientActions.addNotification({ action: "liked", item1: photo }), 0);
 	      }
 	    }.bind(this));
 	  },
@@ -25392,6 +25393,7 @@
 	          actionType: PhotoConstants.updatePhoto,
 	          items: response.data.photos
 	        });
+	        window.setTimeout(NotificationClientActions.addNotification({ action: "unliked", item1: photo }), 0);
 	      }
 	    }.bind(this));
 	  }
@@ -35188,7 +35190,22 @@
 	          n.item2.name
 	        )
 	      );
-	    } else {}
+	    } else if (n.action === "liked" || n.action === "unliked") {
+	      return React.createElement(
+	        'li',
+	        { key: n.id, className: 'notification-list-item' },
+	        React.createElement(
+	          'div',
+	          { className: 'notification-list-image-wrapper' },
+	          React.createElement('img', { className: 'notification-list-photo-image', src: n.item1.image_url })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'notification-list-action' },
+	          n.action
+	        )
+	      );
+	    }
 	  },
 
 	  _onChange: function () {
@@ -35279,9 +35296,9 @@
 	  var newNotification = new Notificaton(notificationIdx, item);
 	  notificationIdx += 1;
 
-	  // window.setTimeout(function(){
-	  //   newNotification.startTimer();
-	  // }, 5000);
+	  window.setTimeout(function () {
+	    newNotification.startTimer();
+	  }, 5000);
 	  notifications.push(newNotification);
 	  this.__emitChange();
 	};

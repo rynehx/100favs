@@ -45,8 +45,13 @@ var NotificationPanel = React.createClass({
 
         <div className = "notification-list-gallery-name">{n.item2.name}</div>
       </li>;
-    }else{
-
+    }else if(n.action === "liked" || n.action === "unliked"){
+      return <li key = {n.id} className = "notification-list-item">
+        <div className = "notification-list-image-wrapper">
+          <img className = "notification-list-photo-image" src={n.item1.image_url}/>
+        </div>
+        <div className = "notification-list-action" >{n.action}</div>
+      </li>;
     }
   },
 

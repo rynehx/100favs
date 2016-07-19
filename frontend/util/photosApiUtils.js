@@ -30,6 +30,7 @@ module.exports = {
           actionType: PhotoConstants.updatePhoto,
           items: response.data.photos
         });
+        window.setTimeout(NotificationClientActions.addNotification({action: "liked",item1: photo}),0);
       }
     }.bind(this));
   },
@@ -42,6 +43,7 @@ module.exports = {
           actionType: PhotoConstants.updatePhoto,
           items: response.data.photos
         });
+        window.setTimeout(NotificationClientActions.addNotification({action: "unliked",item1: photo}),0);
       }
     }.bind(this));
   }
