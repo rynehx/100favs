@@ -6,14 +6,14 @@ module.exports = {
   addNotification: function(notification){
     Dispatcher.dispatch({
       actionType: NotificationConstants.addNotification,
-      items: notification
+      item: notification
       }
     );
   },
   deleteNotification: function(notification){
     Dispatcher.dispatch({
       actionType: NotificationConstants.deleteNotification,
-      items: notification
+      item: notification
       }
     );
   }
