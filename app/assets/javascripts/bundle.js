@@ -35279,9 +35279,9 @@
 	  var newNotification = new Notificaton(notificationIdx, item);
 	  notificationIdx += 1;
 
-	  window.setTimeout(function () {
-	    newNotification.startTimer();
-	  }, 10000);
+	  // window.setTimeout(function(){
+	  //   newNotification.startTimer();
+	  // }, 5000);
 	  notifications.push(newNotification);
 	  this.__emitChange();
 	};
@@ -35326,7 +35326,7 @@
 	};
 
 	Notificaton.prototype.startTimer = function () {
-	  window.setTimeout(this.deleteNotification(this), 10000);
+	  window.setTimeout(this.deleteNotification(this), 5000);
 	};
 
 	Notificaton.prototype.deleteNotification = function (notification) {

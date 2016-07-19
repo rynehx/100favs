@@ -8,7 +8,7 @@ var Notificaton = function(id, obj){
 };
 
 Notificaton.prototype.startTimer = function(){
-  window.setTimeout(this.deleteNotification(this), 10000);
+  window.setTimeout(this.deleteNotification(this), 5000);
 };
 
 
