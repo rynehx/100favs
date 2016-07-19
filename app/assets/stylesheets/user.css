@@ -14,8 +14,10 @@
 
 
 .current-user-picture{
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
 }
 
 .current-user-container{
@@ -27,13 +29,15 @@
 }
 
 .login-button{
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  width: 130px;
+  height: 130px;
   font-size: 30px;
   background-color: blue;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 50%;
 }
 
 .login-button:hover {

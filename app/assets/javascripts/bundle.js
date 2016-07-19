@@ -107,7 +107,11 @@
 	        React.createElement(
 	          'div',
 	          { className: 'login-button', onClick: function () {
-	              _500px.logout();
+	              console.log("logging out");
+	              _500px.logout(function (response) {
+	                console.log(response);
+	                UserClientActions.fetchCurrentUser();
+	              });
 	            } },
 	          'Logout'
 	        )
@@ -119,7 +123,8 @@
 	        React.createElement(
 	          'div',
 	          { className: 'login-button', onClick: function () {
-	              _500px.login(function () {
+	              _500px.login(function (response) {
+	                console.log(response);
 	                UserClientActions.fetchCurrentUser();
 	              });
 	            } },
