@@ -1,5 +1,6 @@
 var Dispatcher = require('../dispatcher/dispatcher');
 var PhotoConstants = require('../constants/photoConstants');
+var NotificationClientActions = require('../actions/notificationClientActions');
 
 module.exports = {
   fetchPhotos: function(size, feature){
