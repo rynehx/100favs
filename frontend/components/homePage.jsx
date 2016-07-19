@@ -42,70 +42,29 @@ var getRatingWidth = function(rating){
 
 var HomePage = React.createClass({
   getInitialState: function () {
-    return { photos: [], loaded: false, user: undefined, galleries: [] };
+    return {loaded: false};
   },
-
-  componentWillMount: function(){
-    _500px.getAuthorizationStatus(function (status) {
-      if(status === "authorized"){
-        UserClientActions.fetchCurrentUser();
-      }
-    });
-  },
-
-  componentDidMount: function(){
-    PhotosClientActions.fetchPopularPhotos(imageSize);
-    this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
-    this.currentUserListener = UserStore.addListener(this._onUserChange);
-    this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
-    currentUser = UserClientActions.fetchCurrentUser();
-    window.addEventListener('resize',function(){
-      this.forceUpdate();
-    }.bind(this));
-  },
-
-  componentWillUnmount: function(){
-    this.popularPhotosListener.remove();
-    this.currentUserListener.remove();
-    this.currentGalleryListener.remove();
-  },
-
-  _onUserChange: function(){
-    var user = UserStore.fetchCurrentUser();
-    GalleryClientActions.fetchUserGalleries(user);
-    this.setState({user: user});
-
-  },
-
-  _onPhotoChange: function(){
-    this.setState({photos: PhotoStore.fetchPopularPhotos()});
-  },
-
-  _onGalleriesChange: function(){
-    this.setState({galleries: GalleryStore.fetchUserGalleries()});
-  },
-
 
   componentDidUpdate: function(){ //the photos container width shrinks after the photos loaded
     //this one time re-render sets the container to the original width;
-    if(!this.state.loaded && this.state.photos.length>0){
+    if(!this.state.loaded && this.props.photos.length>0){
       this.state.loaded = true;
       this.forceUpdate();
     }
   },
 
-  pxLogin: function(){
-    _500px.login();
-  },
-
   handleNSFW : function(photo, position){
-    if(photo.show){
+    if(photo.show && photo.nsfw){
       return <img className = "popular-image" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[0]-edge*2,
           "width" : position[1]-edge*2}} src={photo.image_url} onClick = {function(){
               var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
               win.focus();
           }.bind(this)}/>;
+    }else if(photo.show){
+      return <img className = "popular-image" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[0]-edge*2,
+          "width" : position[1]-edge*2}} src={photo.image_url} />;
     }else{
+
       return <div className = "popular-image nsfw-holder" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[0]-edge*2,
           "width" : position[1]-edge*2, "fontSize": (position[1])/(10) }}  onClick = {function(){
               photo.show = true;
@@ -118,24 +77,6 @@ var HomePage = React.createClass({
 
         </div>;
     }
-  },
-
-
-  _handleLogin: function(){
-    if(this.state.user){
-      return <div className = "current-user-container">
-        <img className = "current-user-picture" src = {this.state.user.userpic_url}></img>
-      </div>;
-    }else{
-      return <button className = "login-button" onClick = {function(){
-          _500px.login(function(){
-            UserClientActions.fetchCurrentUser();
-          });
-        }}>
-        Login
-      </button>;
-    }
-
   },
 
   handleFavorite: function(photo){
@@ -160,8 +101,8 @@ var HomePage = React.createClass({
 
     var container = document.getElementById("photo-container").getBoundingClientRect();
     containerWidth = container.width;
-    var length = this.state.photos.length;
-    var photos = this.state.photos;
+    var length = this.props.photos.length;
+    var photos = this.props.photos;
     var i = 0;
     var row = [];
     var rowWidth = 0;
@@ -199,9 +140,9 @@ var HomePage = React.createClass({
       var photoWidth = (rowPhoto.width*(imageHeight/rowPhoto.height));
       position.push([imageHeight, photoWidth, corner, nextcorner]);
       nextcorner+=photoWidth;
-
     });
 
+    position.push(corner+imageHeight);
 
     return position;
   },
@@ -211,16 +152,10 @@ var HomePage = React.createClass({
     var position = this.setPhotoPosition(); // get all the position of the photo to display
 
     return (
-      <div className="home-page">HomePage
-
-        {this._handleLogin()}
-        <div className = "popular-photos-list" id = "photo-container" style = {{"height": "0px",   "minWidth": 300 }}>
+      <div className="home-page">
+        <div className = "popular-photos-list" id = "photo-container" style = {{"height": position[position.length-1],   "minWidth": 300 }}>
           {
-
-            this.state.photos.map(function(photo,i){
-
-
-
+            this.props.photos.map(function(photo,i){
               return <div className = "popular-image-container" style = {{ "top": position[i][2], "left": position[i][3], "height" : position[i][0],
                 "width" : position[i][1]}} key = {photo.id}>
 
@@ -241,12 +176,16 @@ var HomePage = React.createClass({
                   <div className = "image-bot-fade" style={{ "top": position[i][0]-edge-fadeHeight, "left": edge,"height" : fadeHeight,
                     "width" : position[i][1]-edge*2}} />
 
-                  <img className = "author-photo" onClick={function(){
+                  <img className = "author-photo" onClick={function(e){
+                      e.stopPropagation();
+                      console.log("hi")
                       var win = window.open("https://500px.com/" + photo.user.username, '_blank'); win.focus();}}
                       style={{ "top": position[i][0]-edge-profilePictureSize, "left": edge+edge,
                         "height": profilePictureSize, "width": profilePictureSize}} src={photo.user.userpic_url}/>
 
-                  <div className = "author-username" onClick={function(){
+                  <div className = "author-username" onClick={function(e){
+                        e.stopPropagation();
+                      console.log("hi")
                   var win = window.open("https://500px.com/" + photo.user.username, '_blank'); win.focus();}}
                   style={{ "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2), "left": edge+profilePictureSize+2*edge, "height": fontHeight}}>{photo.user.username}</div>
 
@@ -259,7 +198,7 @@ var HomePage = React.createClass({
                     {this.handleFavorite(photo)}
                   </div>
 
-                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} user = {this.state.user} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.state.galleries}/>
+                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} user = {this.state.user} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.props.galleries}/>
 
 
 

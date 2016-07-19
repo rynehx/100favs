@@ -4,9 +4,9 @@ var AppDispatcher = require('../dispatcher/dispatcher.js'),
 var PhotoConstants = require('../constants/photoConstants');
 var PhotoStore = new Store(AppDispatcher);
 
-var popular =[];
+var photos =[];
 
-PhotoStore.recievePopularPhotos = function(items){
+PhotoStore.recievePhotos = function(items){
   items.forEach(function(photo){
     if(photo.nsfw){
         photo.show=false;
@@ -14,13 +14,13 @@ PhotoStore.recievePopularPhotos = function(items){
         photo.show=true;
     }
   });
-  popular = items;
+  photos = items;
   this.__emitChange();
 };
 
 
-PhotoStore.fetchPopularPhotos = function(){
-  return popular;
+PhotoStore.fetchPhotos = function(){
+  return photos;
 };
 
 PhotoStore.recieveUpdatedPhoto = function(){
@@ -31,8 +31,8 @@ PhotoStore.recieveUpdatedPhoto = function(){
 PhotoStore.__onDispatch = function(payload){
 
   switch(payload.actionType){
-    case PhotoConstants.fetchPopularPhotos:
-    PhotoStore.recievePopularPhotos(payload.items);
+    case PhotoConstants.fetchPhotos:
+    PhotoStore.recievePhotos(payload.items);
     break;
     case PhotoConstants.updatePhoto:
     PhotoStore.recieveUpdatedPhoto(payload.items);

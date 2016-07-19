@@ -53,17 +53,69 @@
 	    Route = ReactRouter.Route,
 	    IndexRoute = ReactRouter.IndexRoute,
 	    hashHistory = ReactRouter.hashHistory;
-
+	//actions
+	var PhotosClientActions = __webpack_require__(222);
+	var UserClientActions = __webpack_require__(229);
+	var GalleryClientActions = __webpack_require__(232);
+	//stores
+	var PhotoStore = __webpack_require__(235);
+	var UserStore = __webpack_require__(253);
+	var GalleryStore = __webpack_require__(254);
 	//components
 	var HomePage = __webpack_require__(221);
+	var PhotoContent = __webpack_require__(281);
+
+	var imageSize = 20;
 
 	var App = React.createClass({
 	  displayName: 'App',
+
+
+	  getInitialState: function () {
+	    return { user: undefined };
+	  },
+
+	  componentWillMount: function () {
+	    _500px.getAuthorizationStatus(function (status) {
+	      if (status === "authorized") {
+	        UserClientActions.fetchCurrentUser();
+	      }
+	    });
+	  },
+
+	  componentDidMount: function () {
+	    UserClientActions.fetchCurrentUser();
+	  },
+
+	  _handleLogin: function () {
+	    if (this.state.user) {
+	      return React.createElement(
+	        'div',
+	        { className: 'current-user-container' },
+	        React.createElement('img', { className: 'current-user-picture', src: this.state.user.userpic_url })
+	      );
+	    } else {
+	      return React.createElement(
+	        'button',
+	        { className: 'login-button', onClick: function () {
+	            _500px.login(function () {
+	              UserClientActions.fetchCurrentUser();
+	            });
+	          } },
+	        'Login'
+	      );
+	    }
+	  },
 
 	  render: function () {
 	    return React.createElement(
 	      'div',
 	      { className: 'container' },
+	      React.createElement(
+	        'div',
+	        { className: 'navbar' },
+	        this._handleLogin()
+	      ),
 	      this.props.children
 	    );
 	  }
@@ -75,7 +127,8 @@
 	  React.createElement(
 	    Route,
 	    { path: '/', components: App },
-	    React.createElement(IndexRoute, { component: HomePage })
+	    React.createElement(IndexRoute, { components: PhotoContent }),
+	    React.createElement(Route, { path: ':tabType', components: PhotoContent })
 	  )
 	);
 
@@ -25323,69 +25376,30 @@
 	  displayName: 'HomePage',
 
 	  getInitialState: function () {
-	    return { photos: [], loaded: false, user: undefined, galleries: [] };
-	  },
-
-	  componentWillMount: function () {
-	    _500px.getAuthorizationStatus(function (status) {
-	      if (status === "authorized") {
-	        UserClientActions.fetchCurrentUser();
-	      }
-	    });
-	  },
-
-	  componentDidMount: function () {
-	    PhotosClientActions.fetchPopularPhotos(imageSize);
-	    this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
-	    this.currentUserListener = UserStore.addListener(this._onUserChange);
-	    this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
-	    currentUser = UserClientActions.fetchCurrentUser();
-	    window.addEventListener('resize', function () {
-	      this.forceUpdate();
-	    }.bind(this));
-	  },
-
-	  componentWillUnmount: function () {
-	    this.popularPhotosListener.remove();
-	    this.currentUserListener.remove();
-	    this.currentGalleryListener.remove();
-	  },
-
-	  _onUserChange: function () {
-	    var user = UserStore.fetchCurrentUser();
-	    GalleryClientActions.fetchUserGalleries(user);
-	    this.setState({ user: user });
-	  },
-
-	  _onPhotoChange: function () {
-	    this.setState({ photos: PhotoStore.fetchPopularPhotos() });
-	  },
-
-	  _onGalleriesChange: function () {
-	    this.setState({ galleries: GalleryStore.fetchUserGalleries() });
+	    return { loaded: false };
 	  },
 
 	  componentDidUpdate: function () {
 	    //the photos container width shrinks after the photos loaded
 	    //this one time re-render sets the container to the original width;
-	    if (!this.state.loaded && this.state.photos.length > 0) {
+	    if (!this.state.loaded && this.props.photos.length > 0) {
 	      this.state.loaded = true;
 	      this.forceUpdate();
 	    }
 	  },
 
-	  pxLogin: function () {
-	    _500px.login();
-	  },
-
 	  handleNSFW: function (photo, position) {
-	    if (photo.show) {
+	    if (photo.show && photo.nsfw) {
 	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
 	          "width": position[1] - edge * 2 }, src: photo.image_url, onClick: function () {
 	          var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
 	          win.focus();
 	        }.bind(this) });
+	    } else if (photo.show) {
+	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
+	          "width": position[1] - edge * 2 }, src: photo.image_url });
 	    } else {
+
 	      return React.createElement(
 	        'div',
 	        { className: 'popular-image nsfw-holder', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
@@ -25404,26 +25418,6 @@
 	          null,
 	          'Click to Show'
 	        )
-	      );
-	    }
-	  },
-
-	  _handleLogin: function () {
-	    if (this.state.user) {
-	      return React.createElement(
-	        'div',
-	        { className: 'current-user-container' },
-	        React.createElement('img', { className: 'current-user-picture', src: this.state.user.userpic_url })
-	      );
-	    } else {
-	      return React.createElement(
-	        'button',
-	        { className: 'login-button', onClick: function () {
-	            _500px.login(function () {
-	              UserClientActions.fetchCurrentUser();
-	            });
-	          } },
-	        'Login'
 	      );
 	    }
 	  },
@@ -25462,8 +25456,8 @@
 
 	    var container = document.getElementById("photo-container").getBoundingClientRect();
 	    containerWidth = container.width;
-	    var length = this.state.photos.length;
-	    var photos = this.state.photos;
+	    var length = this.props.photos.length;
+	    var photos = this.props.photos;
 	    var i = 0;
 	    var row = [];
 	    var rowWidth = 0;
@@ -25503,6 +25497,8 @@
 	      nextcorner += photoWidth;
 	    });
 
+	    position.push(corner + imageHeight);
+
 	    return position;
 	  },
 
@@ -25512,13 +25508,10 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'home-page' },
-	      'HomePage',
-	      this._handleLogin(),
 	      React.createElement(
 	        'div',
-	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": "0px", "minWidth": 300 } },
-	        this.state.photos.map(function (photo, i) {
-
+	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": position[position.length - 1], "minWidth": 300 } },
+	        this.props.photos.map(function (photo, i) {
 	          return React.createElement(
 	            'div',
 	            { className: 'popular-image-container', style: { "top": position[i][2], "left": position[i][3], "height": position[i][0],
@@ -25541,14 +25534,18 @@
 	                  "width": position[i][1] - edge * 2 } }),
 	              React.createElement('div', { className: 'image-bot-fade', style: { "top": position[i][0] - edge - fadeHeight, "left": edge, "height": fadeHeight,
 	                  "width": position[i][1] - edge * 2 } }),
-	              React.createElement('img', { className: 'author-photo', onClick: function () {
+	              React.createElement('img', { className: 'author-photo', onClick: function (e) {
+	                  e.stopPropagation();
+	                  console.log("hi");
 	                  var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
 	                },
 	                style: { "top": position[i][0] - edge - profilePictureSize, "left": edge + edge,
 	                  "height": profilePictureSize, "width": profilePictureSize }, src: photo.user.userpic_url }),
 	              React.createElement(
 	                'div',
-	                { className: 'author-username', onClick: function () {
+	                { className: 'author-username', onClick: function (e) {
+	                    e.stopPropagation();
+	                    console.log("hi");
 	                    var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
 	                  },
 	                  style: { "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2, "left": edge + profilePictureSize + 2 * edge, "height": fontHeight } },
@@ -25569,7 +25566,7 @@
 	                { className: 'image-favorite', style: { "left": position[i][1] - edge * 2 - 20 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
 	                this.handleFavorite(photo)
 	              ),
-	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.state.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.state.galleries }),
+	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.state.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.props.galleries }),
 	              React.createElement(
 	                'div',
 	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
@@ -25597,7 +25594,7 @@
 	var PhotoApiUtils = __webpack_require__(223);
 
 	var PhotosClientActions = {
-	  fetchPopularPhotos: PhotoApiUtils.fetchPopularPhotos,
+	  fetchPhotos: PhotoApiUtils.fetchPhotos,
 	  likePhoto: PhotoApiUtils.likePhoto,
 	  unlikePhoto: PhotoApiUtils.unlikePhoto
 	};
@@ -25612,17 +25609,19 @@
 	var PhotoConstants = __webpack_require__(228);
 
 	module.exports = {
-	  fetchPopularPhotos: function (size) {
-	    _500px.api('/photos', { feature: 'popular', rpp: 100, image_size: size, sort: 'rating', include_states: 1 }, function (response) {
+	  fetchPhotos: function (size, feature) {
+	    console.log(feature);
+	    _500px.api('/photos', { feature: feature, rpp: 100, image_size: size, sort: 'rating', include_states: 1 }, function (response) {
+	      console.log(response);
 	      Dispatcher.dispatch({
-	        actionType: PhotoConstants.fetchPopularPhotos,
+	        actionType: PhotoConstants.fetchPhotos,
 	        items: response.data.photos
 	      });
 	    });
 	  },
 
 	  likePhoto: function (photo) {
-	    //dont use refetch cuz it may fetch new photos, instead use re check or force update
+	    //dont use refetch because it may fetch new photos, instead use re check or force update
 	    _500px.api('/photos/' + photo.id + '/vote', "post", { id: photo.id, vote: 1 }, function (response) {
 	      if (response.success) {
 	        photo.liked = true;
@@ -26076,9 +26075,9 @@
 	var PhotoConstants = __webpack_require__(228);
 	var PhotoStore = new Store(AppDispatcher);
 
-	var popular = [];
+	var photos = [];
 
-	PhotoStore.recievePopularPhotos = function (items) {
+	PhotoStore.recievePhotos = function (items) {
 	  items.forEach(function (photo) {
 	    if (photo.nsfw) {
 	      photo.show = false;
@@ -26086,12 +26085,12 @@
 	      photo.show = true;
 	    }
 	  });
-	  popular = items;
+	  photos = items;
 	  this.__emitChange();
 	};
 
-	PhotoStore.fetchPopularPhotos = function () {
-	  return popular;
+	PhotoStore.fetchPhotos = function () {
+	  return photos;
 	};
 
 	PhotoStore.recieveUpdatedPhoto = function () {
@@ -26101,8 +26100,8 @@
 	PhotoStore.__onDispatch = function (payload) {
 
 	  switch (payload.actionType) {
-	    case PhotoConstants.fetchPopularPhotos:
-	      PhotoStore.recievePopularPhotos(payload.items);
+	    case PhotoConstants.fetchPhotos:
+	      PhotoStore.recievePhotos(payload.items);
 	      break;
 	    case PhotoConstants.updatePhoto:
 	      PhotoStore.recieveUpdatedPhoto(payload.items);
@@ -34953,6 +34952,120 @@
 	module.exports = {
 	  20: "300px"
 	};
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	//React
+	var React = __webpack_require__(1);
+	//actions
+	var PhotosClientActions = __webpack_require__(222);
+	var UserClientActions = __webpack_require__(229);
+	var GalleryClientActions = __webpack_require__(232);
+	//stores
+	var PhotoStore = __webpack_require__(235);
+	var UserStore = __webpack_require__(253);
+	var GalleryStore = __webpack_require__(254);
+	//components
+	var HomePage = __webpack_require__(221);
+	//image sizes
+	var ImageSize = __webpack_require__(280);
+	var imageSize = 20;
+
+	var imageHeight = parseInt(ImageSize[imageSize.toString()]);
+	var edge = 5; //this is the space between the pictures
+	var profilePictureSize = 40;
+	var fontHeight = 20;
+	var fadeHeight = 50;
+	var containerMinWidth = 300;
+	var containerWidth;
+
+	var getRatingWidth = function (rating) {
+	  if (rating.toString().length > 3) {
+	    return 53;
+	  } else {
+	    return 43;
+	  }
+	};
+
+	var PhotoContent = React.createClass({
+	  displayName: 'PhotoContent',
+
+
+	  getInitialState: function () {
+	    return { photos: [], galleries: [] };
+	  },
+
+	  componentWillMount: function () {
+	    _500px.getAuthorizationStatus(function (status) {
+	      if (status === "authorized") {
+	        UserClientActions.fetchCurrentUser();
+	      }
+	    });
+	  },
+
+	  componentDidMount: function () {
+	    // this is a listener to make the tabs follow the scroll of the user//
+	    var tabsBar = document.getElementById('photo-tabs-bar');
+	    document.addEventListener('scroll', function () {
+	      if ((document.documentElement.scrollTop || document.body.scrollTop) > 150) {
+	        tabsBar.style.top = "0px";
+	        tabsBar.style.position = "fixed";
+	        tabsBar.style.zIndex = 9001;
+	      } else if ((document.documentElement.scrollTop || document.body.scrollTop) <= 150) {
+	        tabsBar.style.top = "";
+	        tabsBar.style.position = "";
+	        tabsBar.style.zIndex = "";
+	      }
+	    });
+
+	    PhotosClientActions.fetchPhotos(imageSize, (this.props.params.tabType ? this.props.params.tabType : "popular").toLowerCase());
+	    this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
+	    this.currentUserListener = UserStore.addListener(this._onUserChange);
+	    this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
+	    UserClientActions.fetchCurrentUser();
+	    window.addEventListener('resize', function () {
+	      this.forceUpdate();
+	    }.bind(this));
+	  },
+
+	  componentWillUnmount: function () {
+	    this.popularPhotosListener.remove();
+	    this.currentUserListener.remove();
+	    this.currentGalleryListener.remove();
+	  },
+
+	  _onUserChange: function () {
+	    var user = UserStore.fetchCurrentUser();
+	    GalleryClientActions.fetchUserGalleries(user);
+	    this.setState({ user: user });
+	  },
+
+	  _onPhotoChange: function () {
+	    this.setState({ photos: PhotoStore.fetchPhotos() });
+	  },
+
+	  _onGalleriesChange: function () {
+	    this.setState({ galleries: GalleryStore.fetchUserGalleries() });
+	  },
+
+	  componentWillReceiveProps: function (newprops) {
+	    PhotosClientActions.fetchPhotos(imageSize, (newprops.params.tabType ? newprops.params.tabType : "popular").toLowerCase());
+	  },
+
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'photo-content' },
+	      React.createElement('div', { id: 'photo-tabs-bar', className: 'photo-tabs-bar' }),
+	      React.createElement(HomePage, { photos: this.state.photos, galleries: this.state.galleries })
+	    );
+	  }
+
+	});
+
+	module.exports = PhotoContent;
 
 /***/ }
 /******/ ]);

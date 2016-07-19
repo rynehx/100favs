@@ -38,6 +38,9 @@
    outline:0;
  }
 
+body{
+}
+
 .material-icons.md-light { color: rgba(255, 255, 255, 1); }
 
 .space-right{
@@ -55,4 +58,15 @@
 
 .ReactModal__Body--open {
   overflow: hidden;
+}
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
