@@ -84,28 +84,55 @@
 	    });
 	  },
 
+	  componentWillUnmount: function () {
+	    this.currentUserListener.remove();
+	  },
+
 	  componentDidMount: function () {
-	    UserClientActions.fetchCurrentUser();
+	    this.currentUserListener = UserStore.addListener(this._onUserChange);
+	  },
+
+	  _onUserChange: function () {
+	    var user = UserStore.fetchCurrentUser();
+	    this.setState({ user: user });
 	  },
 
 	  _handleLogin: function () {
+	    var login;
 	    if (this.state.user) {
-	      return React.createElement(
+	      login = React.createElement(
 	        'div',
 	        { className: 'current-user-container' },
-	        React.createElement('img', { className: 'current-user-picture', src: this.state.user.userpic_url })
+	        React.createElement('img', { className: 'current-user-picture', src: this.state.user.userpic_url }),
+	        React.createElement(
+	          'div',
+	          { className: 'login-button', onClick: function () {
+	              _500px.logout();
+	            } },
+	          'Logout'
+	        )
 	      );
 	    } else {
-	      return React.createElement(
-	        'button',
-	        { className: 'login-button', onClick: function () {
-	            _500px.login(function () {
-	              UserClientActions.fetchCurrentUser();
-	            });
-	          } },
-	        'Login'
+	      login = React.createElement(
+	        'div',
+	        { className: 'current-user-container' },
+	        React.createElement(
+	          'div',
+	          { className: 'login-button', onClick: function () {
+	              _500px.login(function () {
+	                UserClientActions.fetchCurrentUser();
+	              });
+	            } },
+	          'Login'
+	        )
 	      );
 	    }
+
+	    return React.createElement(
+	      'div',
+	      { className: 'login-container' },
+	      login
+	    );
 	  },
 
 	  render: function () {

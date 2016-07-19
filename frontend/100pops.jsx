@@ -37,27 +37,52 @@ var App = React.createClass({
         UserClientActions.fetchCurrentUser();
       }
     });
+
+  },
+
+  componentWillUnmount: function(){
+    this.currentUserListener.remove();
   },
 
   componentDidMount: function(){
-    UserClientActions.fetchCurrentUser();
+    this.currentUserListener = UserStore.addListener(this._onUserChange);
   },
 
-    _handleLogin: function(){
-      if(this.state.user){
-        return <div className = "current-user-container">
-          <img className = "current-user-picture" src = {this.state.user.userpic_url}></img>
-        </div>;
-      }else{
-        return <button className = "login-button" onClick = {function(){
+  _onUserChange: function(){
+    var user = UserStore.fetchCurrentUser();
+    this.setState({user: user});
+  },
+
+  _handleLogin: function(){
+    var login;
+    if(this.state.user){
+      login =
+      <div className = "current-user-container">
+        <img className = "current-user-picture" src = {this.state.user.userpic_url}></img>
+        <div className = "login-button" onClick = {function(){
+            _500px.logout();
+          }}>
+          Logout
+        </div>
+      </div>;
+    }else{
+      login =
+      <div className = "current-user-container">
+        <div className = "login-button" onClick = {function(){
             _500px.login(function(){
               UserClientActions.fetchCurrentUser();
             });
           }}>
           Login
-        </button>;
-      }
-    },
+        </div>
+      </div>;
+    }
+
+    return <div className = "login-container">
+      {login}
+    </div>
+
+  },
 
   render: function(){
     return (
