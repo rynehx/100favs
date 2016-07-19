@@ -86,7 +86,7 @@ var collectionModal = React.createClass({
                  <div className="collection-modal-right">
                     <ul className = "collections-container">
                       {this.props.galleries.map(function(gallery){
-                        return <li className = "gallery-item">
+                        return <li key = {gallery.id} className = "gallery-item">
                           <img className = "gallery-cover" src={gallery.cover_photo[0].url} />
                           <div className = "add-gallery-button">
                             <i className = "material-icons md-48 add-gallery-icon">&#xE146;</i>

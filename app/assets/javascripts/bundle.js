@@ -32634,7 +32634,7 @@
 	              this.props.galleries.map(function (gallery) {
 	                return React.createElement(
 	                  'li',
-	                  { className: 'gallery-item' },
+	                  { key: gallery.id, className: 'gallery-item' },
 	                  React.createElement('img', { className: 'gallery-cover', src: gallery.cover_photo[0].url }),
 	                  React.createElement(
 	                    'div',
