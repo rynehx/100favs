@@ -106,7 +106,7 @@
 	        React.createElement('img', { className: 'current-user-picture', src: this.state.user.userpic_url }),
 	        React.createElement(
 	          'div',
-	          { className: 'login-button', onClick: function () {
+	          { className: 'logout-button', onClick: function () {
 	              console.log("logging out");
 	              _500px.logout(function (response) {
 	                console.log(response);
@@ -124,7 +124,6 @@
 	          'div',
 	          { className: 'login-button', onClick: function () {
 	              _500px.login(function (response) {
-	                console.log(response);
 	                UserClientActions.fetchCurrentUser();
 	              });
 	            } },
@@ -35075,10 +35074,14 @@
 	      PhotosClientActions.fetchPhotos(imageSize, category);
 	    }
 
+	    if (this.state.user) {
+	      UserClientActions.fetchCurrentUser();
+	    }
+
 	    this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
 	    this.currentUserListener = UserStore.addListener(this._onUserChange);
 	    this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
-	    UserClientActions.fetchCurrentUser();
+
 	    window.addEventListener('resize', function () {
 	      this.forceUpdate();
 	    }.bind(this));

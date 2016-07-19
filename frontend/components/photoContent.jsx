@@ -75,11 +75,14 @@ var PhotoContent = React.createClass({
       PhotosClientActions.fetchPhotos(imageSize, category);
     }
 
+    if(this.state.user){
+      UserClientActions.fetchCurrentUser();
+    }
 
     this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
     this.currentUserListener = UserStore.addListener(this._onUserChange);
     this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
-    UserClientActions.fetchCurrentUser();
+
     window.addEventListener('resize',function(){
       this.forceUpdate();
     }.bind(this));

@@ -59,7 +59,7 @@ var App = React.createClass({
       login =
       <div className = "current-user-container">
         <img className = "current-user-picture" src = {this.state.user.userpic_url}></img>
-        <div className = "login-button" onClick = {function(){
+        <div className = "logout-button" onClick = {function(){
             console.log("logging out");
             _500px.logout(function(response){
                         console.log(response);
@@ -74,7 +74,6 @@ var App = React.createClass({
       <div className = "current-user-container">
         <div className = "login-button" onClick = {function(){
             _500px.login(function(response){
-                  console.log(response);
               UserClientActions.fetchCurrentUser();
             });
           }}>

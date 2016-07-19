@@ -6,11 +6,6 @@
   cursor: pointer;
 }
 
-.current-user-container{
-  height: 40px;
-  display: flex;
-  align-items: center;
-}
 
 
 .current-user-picture{
@@ -19,6 +14,8 @@
   height: 130px;
   border-radius: 50%;
   z-index: 1;
+  top: 0px;
+  left: 0px;
 }
 
 .current-user-container{
@@ -39,6 +36,22 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+  top: 0px;
+  left: 0px;
+}
+
+.logout-button{
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  font-size: 30px;
+  background-color: blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  top: 0px;
+  left: 0px;
 }
 
 .login-button:hover {
