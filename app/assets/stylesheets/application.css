@@ -53,6 +53,6 @@
   color: yellow;
 }
 
-.ReactModal__Body--open{
-  overflow-y: hidden;
+.ReactModal__Body--open {
+  overflow: hidden;
 }
