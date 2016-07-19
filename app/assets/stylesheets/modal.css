@@ -1,4 +1,4 @@
-.colleciton-modal-frame{
+.collection-modal-frame{
   display: flex;
   height: 100%;
   width: 100%;
@@ -36,6 +36,8 @@
   height: 100%;
 }
 
+
+
 .collections-container{
   overflow: scroll;
   width: 100%;
@@ -45,7 +47,7 @@
 .gallery-item{
   width: 100%;
   display: flex;
-  height: 80px;
+  height: 70px;
   border-radius: 10px;
   align-items: center;
 }
@@ -54,14 +56,25 @@
   background-color: darkgrey;
 }
 
+
+.gallery-cover-container{
+  background-color: black;
+  width: 70px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
 .gallery-cover{
   height: auto;
-  width: 80px;
+  width: 70px;
 }
 
 .add-gallery-icon{
   color: darkgrey;
-  font-size: 40px;
+  font-size: 35px;
 }
 
 .gallery-item:hover .add-gallery-icon{
@@ -71,12 +84,13 @@
 .add-gallery-button{
   width: 40%;
   height: 35px;
-  margin: 30px;
+  margin: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .add-gallery-text{
-  font-size: 16px;
+  font-size: 12px;
+  width: 150px;
 }

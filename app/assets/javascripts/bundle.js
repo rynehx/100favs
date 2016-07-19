@@ -25286,16 +25286,16 @@
 	//actions
 	var PhotosClientActions = __webpack_require__(222);
 	var UserClientActions = __webpack_require__(229);
-	var GalleryClientActions = __webpack_require__(282);
+	var GalleryClientActions = __webpack_require__(232);
 	//stores
-	var PhotoStore = __webpack_require__(232);
-	var UserStore = __webpack_require__(250);
-	var GalleryStore = __webpack_require__(280);
+	var PhotoStore = __webpack_require__(235);
+	var UserStore = __webpack_require__(253);
+	var GalleryStore = __webpack_require__(254);
 	//components
-	var CollectionModal = __webpack_require__(251);
+	var CollectionModal = __webpack_require__(255);
 
 	//image sizes
-	var ImageSize = __webpack_require__(276);
+	var ImageSize = __webpack_require__(280);
 
 	var imageSize = 20;
 
@@ -26016,8 +26016,62 @@
 /* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var GalleryApiUtils = __webpack_require__(233);
+
+	var GalleryClientActions = {
+	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries,
+	  postToGallery: GalleryApiUtils.postToGallery
+	};
+
+	module.exports = GalleryClientActions;
+
+/***/ },
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(224);
+	var GalleryConstants = __webpack_require__(234);
+
+	var GalleryApiUtils = {
+	  fetchUserGalleries: function (user) {
+	    _500px.api('/users/' + user.id + '/galleries', { rpp: 100, sort: 'last_added_to_at', include_cover: 1 }, function (response) {
+	      Dispatcher.dispatch({
+	        actionType: GalleryConstants.fetchUserGalleries,
+	        items: response.data.galleries
+	      });
+	    });
+	  },
+
+	  postToGallery: function (user, gallery, photo) {
+	    console.log(user, gallery, photo);
+	    console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
+	    _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', 'put', { add: { 'after': { 'id': null }, 'photos': [photo.id] } }, function (response) {
+	      console.log(response);
+	      // Dispatcher.dispatch({
+	      //   actionType: GalleryConstants.fetchUserGalleries,
+	      //   items: response.data.galleries
+	      //   }
+	      // );
+	    });
+	  }
+	};
+
+	module.exports = GalleryApiUtils;
+
+/***/ },
+/* 234 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  fetchUserGalleries: "FETCHUSERGALLERIES"
+	};
+
+/***/ },
+/* 235 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(233).Store;
+	    Store = __webpack_require__(236).Store;
 
 	var PhotoConstants = __webpack_require__(228);
 	var PhotoStore = new Store(AppDispatcher);
@@ -26058,7 +26112,7 @@
 	module.exports = PhotoStore;
 
 /***/ },
-/* 233 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26070,15 +26124,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Container = __webpack_require__(234);
-	module.exports.MapStore = __webpack_require__(237);
-	module.exports.Mixin = __webpack_require__(249);
-	module.exports.ReduceStore = __webpack_require__(238);
-	module.exports.Store = __webpack_require__(239);
+	module.exports.Container = __webpack_require__(237);
+	module.exports.MapStore = __webpack_require__(240);
+	module.exports.Mixin = __webpack_require__(252);
+	module.exports.ReduceStore = __webpack_require__(241);
+	module.exports.Store = __webpack_require__(242);
 
 
 /***/ },
-/* 234 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26100,10 +26154,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStoreGroup = __webpack_require__(235);
+	var FluxStoreGroup = __webpack_require__(238);
 
 	var invariant = __webpack_require__(227);
-	var shallowEqual = __webpack_require__(236);
+	var shallowEqual = __webpack_require__(239);
 
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -26261,7 +26315,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 235 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26342,7 +26396,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 236 */
+/* 239 */
 /***/ function(module, exports) {
 
 	/**
@@ -26397,7 +26451,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 237 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26418,8 +26472,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxReduceStore = __webpack_require__(238);
-	var Immutable = __webpack_require__(248);
+	var FluxReduceStore = __webpack_require__(241);
+	var Immutable = __webpack_require__(251);
 
 	var invariant = __webpack_require__(227);
 
@@ -26547,7 +26601,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 238 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26568,9 +26622,9 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStore = __webpack_require__(239);
+	var FluxStore = __webpack_require__(242);
 
-	var abstractMethod = __webpack_require__(247);
+	var abstractMethod = __webpack_require__(250);
 	var invariant = __webpack_require__(227);
 
 	var FluxReduceStore = (function (_FluxStore) {
@@ -26654,7 +26708,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 239 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26673,7 +26727,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _require = __webpack_require__(240);
+	var _require = __webpack_require__(243);
 
 	var EventEmitter = _require.EventEmitter;
 
@@ -26837,7 +26891,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 240 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26850,14 +26904,14 @@
 	 */
 
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(241)
+	  EventEmitter: __webpack_require__(244)
 	};
 
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 241 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26876,11 +26930,11 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var EmitterSubscription = __webpack_require__(242);
-	var EventSubscriptionVendor = __webpack_require__(244);
+	var EmitterSubscription = __webpack_require__(245);
+	var EventSubscriptionVendor = __webpack_require__(247);
 
-	var emptyFunction = __webpack_require__(246);
-	var invariant = __webpack_require__(245);
+	var emptyFunction = __webpack_require__(249);
+	var invariant = __webpack_require__(248);
 
 	/**
 	 * @class BaseEventEmitter
@@ -27054,7 +27108,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 242 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27075,7 +27129,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var EventSubscription = __webpack_require__(243);
+	var EventSubscription = __webpack_require__(246);
 
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -27107,7 +27161,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 243 */
+/* 246 */
 /***/ function(module, exports) {
 
 	/**
@@ -27161,7 +27215,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 244 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27180,7 +27234,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(245);
+	var invariant = __webpack_require__(248);
 
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -27270,7 +27324,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 245 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27325,7 +27379,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 246 */
+/* 249 */
 /***/ function(module, exports) {
 
 	/**
@@ -27367,7 +27421,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 247 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27394,7 +27448,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 248 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32378,7 +32432,7 @@
 	}));
 
 /***/ },
-/* 249 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -32395,7 +32449,7 @@
 
 	'use strict';
 
-	var FluxStoreGroup = __webpack_require__(235);
+	var FluxStoreGroup = __webpack_require__(238);
 
 	var invariant = __webpack_require__(227);
 
@@ -32501,11 +32555,11 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 250 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(233).Store;
+	    Store = __webpack_require__(236).Store;
 
 	var UserConstants = __webpack_require__(231);
 
@@ -32533,15 +32587,52 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 251 */
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(224),
+	    Store = __webpack_require__(236).Store;
+
+	var GalleryConstants = __webpack_require__(234);
+
+	var GalleryStore = new Store(AppDispatcher);
+
+	var galleries = [];
+
+	GalleryStore.recieveUserGalleries = function (data) {
+	  if (data) {
+	    galleries = data;
+	  } else {
+	    galleries = [];
+	  }
+
+	  this.__emitChange();
+	};
+
+	GalleryStore.fetchUserGalleries = function () {
+	  return galleries;
+	};
+
+	GalleryStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case GalleryConstants.fetchUserGalleries:
+	      GalleryStore.recieveUserGalleries(payload.items);
+	      break;
+	  }
+	};
+
+	module.exports = GalleryStore;
+
+/***/ },
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//react
 	var React = __webpack_require__(1),
-	    LinkedStateMixin = __webpack_require__(252),
-	    Modal = __webpack_require__(256);
+	    LinkedStateMixin = __webpack_require__(256),
+	    Modal = __webpack_require__(260);
 	//actions
-	var GalleryClientActions = __webpack_require__(282);
+	var GalleryClientActions = __webpack_require__(232);
 
 	var selected;
 	var style = {
@@ -32620,12 +32711,16 @@
 	          style: style },
 	        React.createElement(
 	          'div',
-	          { className: 'colleciton-modal-frame' },
+	          { className: 'collection-modal-frame' },
 	          React.createElement(
 	            'div',
 	            { className: 'collection-modal-left' },
 	            React.createElement('div', { className: 'collection-modal-image-overlay' }),
-	            React.createElement('img', { className: 'collection-modal-image', src: this.props.photo.image_url })
+	            React.createElement(
+	              'div',
+	              { className: 'gallery-cover-container' },
+	              React.createElement('img', { className: 'collection-modal-image', src: this.props.photo.image_url })
+	            )
 	          ),
 	          React.createElement(
 	            'div',
@@ -32652,7 +32747,7 @@
 	                    React.createElement(
 	                      'div',
 	                      { className: 'add-gallery-text' },
-	                      'Gallery'
+	                      gallery.name
 	                    )
 	                  )
 	                );
@@ -32668,13 +32763,13 @@
 	module.exports = collectionModal;
 
 /***/ },
-/* 252 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(253);
+	module.exports = __webpack_require__(257);
 
 /***/ },
-/* 253 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32691,8 +32786,8 @@
 
 	'use strict';
 
-	var ReactLink = __webpack_require__(254);
-	var ReactStateSetters = __webpack_require__(255);
+	var ReactLink = __webpack_require__(258);
+	var ReactStateSetters = __webpack_require__(259);
 
 	/**
 	 * A simple mixin around ReactLink.forState().
@@ -32715,7 +32810,7 @@
 	module.exports = LinkedStateMixin;
 
 /***/ },
-/* 254 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32789,7 +32884,7 @@
 	module.exports = ReactLink;
 
 /***/ },
-/* 255 */
+/* 259 */
 /***/ function(module, exports) {
 
 	/**
@@ -32898,25 +32993,25 @@
 	module.exports = ReactStateSetters;
 
 /***/ },
-/* 256 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(257);
+	module.exports = __webpack_require__(261);
 
 
 
 /***/ },
-/* 257 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(258);
-	var ModalPortal = React.createFactory(__webpack_require__(259));
-	var ariaAppHider = __webpack_require__(274);
-	var elementClass = __webpack_require__(275);
+	var ExecutionEnvironment = __webpack_require__(262);
+	var ModalPortal = React.createFactory(__webpack_require__(263));
+	var ariaAppHider = __webpack_require__(278);
+	var elementClass = __webpack_require__(279);
 	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
-	var Assign = __webpack_require__(263);
+	var Assign = __webpack_require__(267);
 
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
 	var AppElement = ExecutionEnvironment.canUseDOM ? document.body : {appendChild: function() {}};
@@ -33024,7 +33119,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 258 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -33069,14 +33164,14 @@
 
 
 /***/ },
-/* 259 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(260);
-	var scopeTab = __webpack_require__(262);
-	var Assign = __webpack_require__(263);
+	var focusManager = __webpack_require__(264);
+	var scopeTab = __webpack_require__(266);
+	var Assign = __webpack_require__(267);
 
 	// so that our CSS is statically analyzable
 	var CLASS_NAMES = {
@@ -33267,10 +33362,10 @@
 
 
 /***/ },
-/* 260 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(261);
+	var findTabbable = __webpack_require__(265);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -33341,7 +33436,7 @@
 
 
 /***/ },
-/* 261 */
+/* 265 */
 /***/ function(module, exports) {
 
 	/*!
@@ -33397,10 +33492,10 @@
 
 
 /***/ },
-/* 262 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(261);
+	var findTabbable = __webpack_require__(265);
 
 	module.exports = function(node, event) {
 	  var tabbable = findTabbable(node);
@@ -33422,7 +33517,7 @@
 
 
 /***/ },
-/* 263 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33433,9 +33528,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(264),
-	    createAssigner = __webpack_require__(270),
-	    keys = __webpack_require__(266);
+	var baseAssign = __webpack_require__(268),
+	    createAssigner = __webpack_require__(274),
+	    keys = __webpack_require__(270);
 
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -33508,7 +33603,7 @@
 
 
 /***/ },
-/* 264 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33519,8 +33614,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(265),
-	    keys = __webpack_require__(266);
+	var baseCopy = __webpack_require__(269),
+	    keys = __webpack_require__(270);
 
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -33541,7 +33636,7 @@
 
 
 /***/ },
-/* 265 */
+/* 269 */
 /***/ function(module, exports) {
 
 	/**
@@ -33579,7 +33674,7 @@
 
 
 /***/ },
-/* 266 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33590,9 +33685,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(267),
-	    isArguments = __webpack_require__(268),
-	    isArray = __webpack_require__(269);
+	var getNative = __webpack_require__(271),
+	    isArguments = __webpack_require__(272),
+	    isArray = __webpack_require__(273);
 
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -33821,7 +33916,7 @@
 
 
 /***/ },
-/* 267 */
+/* 271 */
 /***/ function(module, exports) {
 
 	/**
@@ -33964,7 +34059,7 @@
 
 
 /***/ },
-/* 268 */
+/* 272 */
 /***/ function(module, exports) {
 
 	/**
@@ -34213,7 +34308,7 @@
 
 
 /***/ },
-/* 269 */
+/* 273 */
 /***/ function(module, exports) {
 
 	/**
@@ -34399,7 +34494,7 @@
 
 
 /***/ },
-/* 270 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34410,9 +34505,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(271),
-	    isIterateeCall = __webpack_require__(272),
-	    restParam = __webpack_require__(273);
+	var bindCallback = __webpack_require__(275),
+	    isIterateeCall = __webpack_require__(276),
+	    restParam = __webpack_require__(277);
 
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -34457,7 +34552,7 @@
 
 
 /***/ },
-/* 271 */
+/* 275 */
 /***/ function(module, exports) {
 
 	/**
@@ -34528,7 +34623,7 @@
 
 
 /***/ },
-/* 272 */
+/* 276 */
 /***/ function(module, exports) {
 
 	/**
@@ -34666,7 +34761,7 @@
 
 
 /***/ },
-/* 273 */
+/* 277 */
 /***/ function(module, exports) {
 
 	/**
@@ -34739,7 +34834,7 @@
 
 
 /***/ },
-/* 274 */
+/* 278 */
 /***/ function(module, exports) {
 
 	var _element = typeof document !== 'undefined' ? document.body : null;
@@ -34787,7 +34882,7 @@
 
 
 /***/ },
-/* 275 */
+/* 279 */
 /***/ function(module, exports) {
 
 	module.exports = function(opts) {
@@ -34852,105 +34947,12 @@
 
 
 /***/ },
-/* 276 */
+/* 280 */
 /***/ function(module, exports) {
 
 	module.exports = {
 	  20: "300px"
 	};
-
-/***/ },
-/* 277 */,
-/* 278 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Dispatcher = __webpack_require__(224);
-	var GalleryConstants = __webpack_require__(279);
-
-	var GalleryApiUtils = {
-	  fetchUserGalleries: function (user) {
-	    _500px.api('/users/' + user.id + '/galleries', { rpp: 100, sort: 'last_added_to_at', include_cover: 1 }, function (response) {
-	      Dispatcher.dispatch({
-	        actionType: GalleryConstants.fetchUserGalleries,
-	        items: response.data.galleries
-	      });
-	    });
-	  },
-
-	  postToGallery: function (user, gallery, photo) {
-	    console.log(user, gallery, photo);
-	    console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
-	    _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', 'put', { add: { 'after': { 'id': null }, 'photos': [photo.id] } }, function (response) {
-	      console.log(response);
-	      // Dispatcher.dispatch({
-	      //   actionType: GalleryConstants.fetchUserGalleries,
-	      //   items: response.data.galleries
-	      //   }
-	      // );
-	    });
-	  }
-	};
-
-	module.exports = GalleryApiUtils;
-
-/***/ },
-/* 279 */
-/***/ function(module, exports) {
-
-	module.exports = {
-	  fetchUserGalleries: "FETCHUSERGALLERIES"
-	};
-
-/***/ },
-/* 280 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(233).Store;
-
-	var GalleryConstants = __webpack_require__(279);
-
-	var GalleryStore = new Store(AppDispatcher);
-
-	var galleries = [];
-
-	GalleryStore.recieveUserGalleries = function (data) {
-	  if (data) {
-	    galleries = data;
-	  } else {
-	    galleries = [];
-	  }
-
-	  this.__emitChange();
-	};
-
-	GalleryStore.fetchUserGalleries = function () {
-	  return galleries;
-	};
-
-	GalleryStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case GalleryConstants.fetchUserGalleries:
-	      GalleryStore.recieveUserGalleries(payload.items);
-	      break;
-	  }
-	};
-
-	module.exports = GalleryStore;
-
-/***/ },
-/* 281 */,
-/* 282 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var GalleryApiUtils = __webpack_require__(278);
-
-	var GalleryClientActions = {
-	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries,
-	  postToGallery: GalleryApiUtils.postToGallery
-	};
-
-	module.exports = GalleryClientActions;
 
 /***/ }
 /******/ ]);
