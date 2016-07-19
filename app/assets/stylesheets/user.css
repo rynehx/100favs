@@ -1,3 +1,11 @@
+.login-container{
+  border-radius: 50%;
+  overflow: hidden;
+  font-family: "Helvetica Neue", HelveticaNeue, Helvetica, TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arial, sans-serif;
+  color: white;
+  cursor: pointer;
+}
+
 .current-user-container{
   height: 40px;
   display: flex;
@@ -13,7 +21,6 @@
 .current-user-container{
   width: 130px;
   height: 130px;
-  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,7 +31,9 @@
   height: 100%;
   font-size: 30px;
   background-color: blue;
-  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-button:hover {
