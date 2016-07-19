@@ -396,7 +396,7 @@
               string_parts.push(encode_param_name(property, root) + '%5B%5D=' + encoded_value);
             }
           } else if (typeof value == 'object') {
-            string_parts.push(this.object_to_params(value, encode_param_name(property, root)));
+            string_parts.push(object_to_params(value, encode_param_name(property, root)));
           } else {
             string_parts.push(encode_param_name(property, root) + '=' + encodeURIComponent(value));
           }

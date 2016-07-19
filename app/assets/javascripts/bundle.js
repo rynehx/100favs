@@ -25286,7 +25286,7 @@
 	//actions
 	var PhotosClientActions = __webpack_require__(222);
 	var UserClientActions = __webpack_require__(229);
-	var GalleryClientActions = __webpack_require__(277);
+	var GalleryClientActions = __webpack_require__(282);
 	//stores
 	var PhotoStore = __webpack_require__(232);
 	var UserStore = __webpack_require__(250);
@@ -34860,19 +34860,7 @@
 	};
 
 /***/ },
-/* 277 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var GalleryApiUtils = __webpack_require__(278);
-
-	var GalleryClientActions = {
-	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries,
-	  postToGallery: GalleryApiUtils.postToGallery
-	};
-
-	module.exports = GalleryClientActions;
-
-/***/ },
+/* 277 */,
 /* 278 */
 /***/ function(module, exports, __webpack_require__) {
 

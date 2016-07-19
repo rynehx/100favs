@@ -3,7 +3,7 @@ var React = require('react');
 //actions
 var PhotosClientActions = require('../actions/PhotosClientActions');
 var UserClientActions = require('../actions/UserClientActions');
-var GalleryClientActions = require('../actions/GalleryClientActions');
+var GalleryClientActions = require('../actions/galleryClientActions');
 //stores
 var PhotoStore = require('../stores/photosStore');
 var UserStore = require('../stores/userStore');
