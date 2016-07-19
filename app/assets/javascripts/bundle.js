@@ -107,9 +107,7 @@
 	        React.createElement(
 	          'div',
 	          { className: 'logout-button', onClick: function () {
-	              console.log("logging out");
 	              _500px.logout(function (response) {
-	                console.log(response);
 	                UserClientActions.fetchCurrentUser();
 	              });
 	            } },
@@ -25779,13 +25777,13 @@
 	module.exports = {
 	  fetchCurrentUser: function () {
 	    _500px.api('/users', {}, function (response) {
+	      console.log(response);
 	      Dispatcher.dispatch({
 	        actionType: UserConstants.fetchCurrentUser,
 	        items: response.data.user
 	      });
 	    });
 	  }
-
 	};
 
 /***/ },
