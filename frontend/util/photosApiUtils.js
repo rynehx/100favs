@@ -3,9 +3,17 @@ var PhotoConstants = require('../constants/photoConstants');
 
 module.exports = {
   fetchPhotos: function(size, feature){
-    console.log(feature)
     _500px.api('/photos', { feature: feature, rpp: 100, image_size: size, sort: 'rating', include_states:1 }, function (response) {
-    console.log(response)
+        Dispatcher.dispatch({
+          actionType: PhotoConstants.fetchPhotos,
+          items: response.data.photos
+          }
+        );
+    });
+  },
+
+  fetchFriendsPhotos: function(size, feature, user){
+    _500px.api('/photos', { feature: feature, user_id: user.id ,rpp: 100, image_size: size, sort: 'rating', include_states:1 }, function (response) {
         Dispatcher.dispatch({
           actionType: PhotoConstants.fetchPhotos,
           items: response.data.photos

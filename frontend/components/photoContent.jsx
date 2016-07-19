@@ -1,5 +1,6 @@
 //React
-var React = require('react');
+var React = require('react'),
+    hashHistory = require('react-router').hashHistory;
 //actions
 var PhotosClientActions = require('../actions/PhotosClientActions');
 var UserClientActions = require('../actions/UserClientActions');
@@ -30,13 +31,20 @@ var getRatingWidth = function(rating){
   }
 };
 
+var tabs = ['Popular', 'Upcoming', 'Fresh', 'Editors', 'Friends'];
 
-
+var tabsToSearch = {
+  'popular' : 'popular',
+  'upcoming': 'upcoming',
+  'fresh'   : 'fresh_today',
+  'editors' : 'editors',
+  'friends'  : 'user_friends'
+};
 
 var PhotoContent = React.createClass({
 
   getInitialState: function () {
-    return { photos: [], galleries: [] };
+    return { photos: [], galleries: [],user: undefined  };
   },
 
   componentWillMount: function(){
@@ -62,7 +70,12 @@ var PhotoContent = React.createClass({
       }
     });
 
-    PhotosClientActions.fetchPhotos(imageSize, (this.props.params.tabType ? this.props.params.tabType : "popular").toLowerCase());
+    var category = tabsToSearch[(this.props.params.tabType ? this.props.params.tabType : "popular").toLowerCase()];
+    if(category!=="user_friends"){
+      PhotosClientActions.fetchPhotos(imageSize, category);
+    }
+
+
     this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
     this.currentUserListener = UserStore.addListener(this._onUserChange);
     this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
@@ -80,6 +93,11 @@ var PhotoContent = React.createClass({
 
   _onUserChange: function(){
     var user = UserStore.fetchCurrentUser();
+
+    var category = tabsToSearch[(this.props.params.tabType ? this.props.params.tabType : "popular").toLowerCase()];
+    if(category==="user_friends"){
+      PhotosClientActions.fetchFriendsPhotos(imageSize, category, user);
+    }
     GalleryClientActions.fetchUserGalleries(user);
     this.setState({user: user});
 
@@ -97,15 +115,34 @@ var PhotoContent = React.createClass({
 
 
   componentWillReceiveProps: function(newprops){
-    PhotosClientActions.fetchPhotos(imageSize, (newprops.params.tabType ? newprops.params.tabType : "popular").toLowerCase());  
+    console.log(this.state.user)
+    var category = tabsToSearch[(newprops.params.tabType ? newprops.params.tabType : "popular").toLowerCase()];
+
+    if(category==="user_friends"){
+      PhotosClientActions.fetchFriendsPhotos(imageSize, category, this.state.user);
+    }else{
+      PhotosClientActions.fetchPhotos(imageSize, category);
+    }
   },
 
   render: function(){
     return (
       <div className = "photo-content">
         <div id = "photo-tabs-bar" className = "photo-tabs-bar">
+          <ul className = "photo-content-tab-container">
+            {tabs.map(function(tab,i){
+              if(!this.props.params.tabType && i===0){
+                return <li key = {i} className = "photo-content-tab photo-content-tab-selected">{tab}</li>;
+              }else if(this.props.params.tabType === tab.toLowerCase()){
+                return <li key = {i} className = "photo-content-tab photo-content-tab-selected">{tab}</li>;
+              }else {
+                return <li key = {i} className = "photo-content-tab" onClick = {function(){hashHistory.push('/'+tab.toLowerCase())}}>{tab}</li>;
+              }
+
+            }.bind(this))}
+          </ul>
         </div>
-        <HomePage photos = {this.state.photos} galleries = {this.state.galleries}/>
+        <HomePage user={this.state.user} photos = {this.state.photos} galleries = {this.state.galleries}/>
       </div>
 
     );

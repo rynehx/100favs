@@ -48,8 +48,8 @@ var collectionModal = React.createClass({
     },
 
     componentWillMount: function(){
-        Modal.setAppElement('body');
-     },
+      Modal.setAppElement('body');
+    },
 
     openModal: function() {
       this.setState({modalIsOpen: true});

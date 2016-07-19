@@ -25536,7 +25536,6 @@
 	                  "width": position[i][1] - edge * 2 } }),
 	              React.createElement('img', { className: 'author-photo', onClick: function (e) {
 	                  e.stopPropagation();
-	                  console.log("hi");
 	                  var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
 	                },
 	                style: { "top": position[i][0] - edge - profilePictureSize, "left": edge + edge,
@@ -25545,7 +25544,6 @@
 	                'div',
 	                { className: 'author-username', onClick: function (e) {
 	                    e.stopPropagation();
-	                    console.log("hi");
 	                    var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
 	                  },
 	                  style: { "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2, "left": edge + profilePictureSize + 2 * edge, "height": fontHeight } },
@@ -25566,7 +25564,7 @@
 	                { className: 'image-favorite', style: { "left": position[i][1] - edge * 2 - 20 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
 	                this.handleFavorite(photo)
 	              ),
-	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.state.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.props.galleries }),
+	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.props.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.props.galleries }),
 	              React.createElement(
 	                'div',
 	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
@@ -25596,7 +25594,8 @@
 	var PhotosClientActions = {
 	  fetchPhotos: PhotoApiUtils.fetchPhotos,
 	  likePhoto: PhotoApiUtils.likePhoto,
-	  unlikePhoto: PhotoApiUtils.unlikePhoto
+	  unlikePhoto: PhotoApiUtils.unlikePhoto,
+	  fetchFriendsPhotos: PhotoApiUtils.fetchFriendsPhotos
 	};
 
 	module.exports = PhotosClientActions;
@@ -25610,9 +25609,16 @@
 
 	module.exports = {
 	  fetchPhotos: function (size, feature) {
-	    console.log(feature);
 	    _500px.api('/photos', { feature: feature, rpp: 100, image_size: size, sort: 'rating', include_states: 1 }, function (response) {
-	      console.log(response);
+	      Dispatcher.dispatch({
+	        actionType: PhotoConstants.fetchPhotos,
+	        items: response.data.photos
+	      });
+	    });
+	  },
+
+	  fetchFriendsPhotos: function (size, feature, user) {
+	    _500px.api('/photos', { feature: feature, user_id: user.id, rpp: 100, image_size: size, sort: 'rating', include_states: 1 }, function (response) {
 	      Dispatcher.dispatch({
 	        actionType: PhotoConstants.fetchPhotos,
 	        items: response.data.photos
@@ -34958,7 +34964,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	//React
-	var React = __webpack_require__(1);
+	var React = __webpack_require__(1),
+	    hashHistory = __webpack_require__(159).hashHistory;
 	//actions
 	var PhotosClientActions = __webpack_require__(222);
 	var UserClientActions = __webpack_require__(229);
@@ -34989,12 +34996,22 @@
 	  }
 	};
 
+	var tabs = ['Popular', 'Upcoming', 'Fresh', 'Editors', 'Friends'];
+
+	var tabsToSearch = {
+	  'popular': 'popular',
+	  'upcoming': 'upcoming',
+	  'fresh': 'fresh_today',
+	  'editors': 'editors',
+	  'friends': 'user_friends'
+	};
+
 	var PhotoContent = React.createClass({
 	  displayName: 'PhotoContent',
 
 
 	  getInitialState: function () {
-	    return { photos: [], galleries: [] };
+	    return { photos: [], galleries: [], user: undefined };
 	  },
 
 	  componentWillMount: function () {
@@ -35020,7 +35037,11 @@
 	      }
 	    });
 
-	    PhotosClientActions.fetchPhotos(imageSize, (this.props.params.tabType ? this.props.params.tabType : "popular").toLowerCase());
+	    var category = tabsToSearch[(this.props.params.tabType ? this.props.params.tabType : "popular").toLowerCase()];
+	    if (category !== "user_friends") {
+	      PhotosClientActions.fetchPhotos(imageSize, category);
+	    }
+
 	    this.popularPhotosListener = PhotoStore.addListener(this._onPhotoChange);
 	    this.currentUserListener = UserStore.addListener(this._onUserChange);
 	    this.currentGalleryListener = GalleryStore.addListener(this._onGalleriesChange);
@@ -35038,6 +35059,11 @@
 
 	  _onUserChange: function () {
 	    var user = UserStore.fetchCurrentUser();
+
+	    var category = tabsToSearch[(this.props.params.tabType ? this.props.params.tabType : "popular").toLowerCase()];
+	    if (category === "user_friends") {
+	      PhotosClientActions.fetchFriendsPhotos(imageSize, category, user);
+	    }
 	    GalleryClientActions.fetchUserGalleries(user);
 	    this.setState({ user: user });
 	  },
@@ -35051,15 +35077,52 @@
 	  },
 
 	  componentWillReceiveProps: function (newprops) {
-	    PhotosClientActions.fetchPhotos(imageSize, (newprops.params.tabType ? newprops.params.tabType : "popular").toLowerCase());
+	    console.log(this.state.user);
+	    var category = tabsToSearch[(newprops.params.tabType ? newprops.params.tabType : "popular").toLowerCase()];
+
+	    if (category === "user_friends") {
+	      PhotosClientActions.fetchFriendsPhotos(imageSize, category, this.state.user);
+	    } else {
+	      PhotosClientActions.fetchPhotos(imageSize, category);
+	    }
 	  },
 
 	  render: function () {
 	    return React.createElement(
 	      'div',
 	      { className: 'photo-content' },
-	      React.createElement('div', { id: 'photo-tabs-bar', className: 'photo-tabs-bar' }),
-	      React.createElement(HomePage, { photos: this.state.photos, galleries: this.state.galleries })
+	      React.createElement(
+	        'div',
+	        { id: 'photo-tabs-bar', className: 'photo-tabs-bar' },
+	        React.createElement(
+	          'ul',
+	          { className: 'photo-content-tab-container' },
+	          tabs.map(function (tab, i) {
+	            if (!this.props.params.tabType && i === 0) {
+	              return React.createElement(
+	                'li',
+	                { key: i, className: 'photo-content-tab photo-content-tab-selected' },
+	                tab
+	              );
+	            } else if (this.props.params.tabType === tab.toLowerCase()) {
+	              return React.createElement(
+	                'li',
+	                { key: i, className: 'photo-content-tab photo-content-tab-selected' },
+	                tab
+	              );
+	            } else {
+	              return React.createElement(
+	                'li',
+	                { key: i, className: 'photo-content-tab', onClick: function () {
+	                    hashHistory.push('/' + tab.toLowerCase());
+	                  } },
+	                tab
+	              );
+	            }
+	          }.bind(this))
+	        )
+	      ),
+	      React.createElement(HomePage, { user: this.state.user, photos: this.state.photos, galleries: this.state.galleries })
 	    );
 	  }
 

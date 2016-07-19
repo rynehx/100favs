@@ -74,7 +74,7 @@ var AppRouter = (
   <Router history={hashHistory}>
     <Route path="/" components={App}>
       <IndexRoute components={PhotoContent}/>
-      <Route path=":tabType" components={PhotoContent}/>
+      <Route path=":tabType"  components={PhotoContent}/>
     </Route>
   </Router>
 );

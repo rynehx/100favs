@@ -178,14 +178,12 @@ var HomePage = React.createClass({
 
                   <img className = "author-photo" onClick={function(e){
                       e.stopPropagation();
-                      console.log("hi")
                       var win = window.open("https://500px.com/" + photo.user.username, '_blank'); win.focus();}}
                       style={{ "top": position[i][0]-edge-profilePictureSize, "left": edge+edge,
                         "height": profilePictureSize, "width": profilePictureSize}} src={photo.user.userpic_url}/>
 
                   <div className = "author-username" onClick={function(e){
                         e.stopPropagation();
-                      console.log("hi")
                   var win = window.open("https://500px.com/" + photo.user.username, '_blank'); win.focus();}}
                   style={{ "top": (position[i][0]-edge)-(fontHeight/2)-(profilePictureSize/2), "left": edge+profilePictureSize+2*edge, "height": fontHeight}}>{photo.user.username}</div>
 
@@ -198,7 +196,7 @@ var HomePage = React.createClass({
                     {this.handleFavorite(photo)}
                   </div>
 
-                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} user = {this.state.user} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.props.galleries}/>
+                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} user = {this.props.user} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.props.galleries}/>
 
 
 

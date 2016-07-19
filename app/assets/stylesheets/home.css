@@ -20,4 +20,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: "Helvetica Neue", HelveticaNeue, Helvetica, TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arial, sans-serif;
+}
+
+
+.photo-content-tab-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.photo-content-tab{
+  width: 120px;
+  font-size: 20px;
+  margin: 0px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+}
+
+.photo-content-tab-selected{
+  border-bottom: 5px solid;
+  border-color: white;
+
+  height: 55px;
+
 }
