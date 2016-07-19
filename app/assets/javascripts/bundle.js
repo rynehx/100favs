@@ -35280,7 +35280,7 @@
 
 	  window.setTimeout(function () {
 	    newNotification.startTimer();
-	  }, 0);
+	  }, 10000);
 	  notifications.push(newNotification);
 	  this.__emitChange();
 	};
