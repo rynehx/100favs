@@ -18,6 +18,7 @@ var GalleryStore = require('./stores/galleryStore');
 //components
 var HomePage = require("./components/homePage");
 var PhotoContent = require('./components/photoContent');
+var NotificationPanel = require('./components/notificationPanel');
 
 var imageSize = 20;
 
@@ -65,6 +66,7 @@ var App = React.createClass({
           {this._handleLogin()}
         </div>
         {this.props.children}
+        <NotificationPanel />
       </div>
     );
   }
@@ -79,7 +81,6 @@ var AppRouter = (
   </Router>
 );
 
-//<Route path="home" components={HomePage}/>
 
 document.addEventListener('DOMContentLoaded', function(){
   _500px.init({

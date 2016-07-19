@@ -90,6 +90,7 @@ var collectionModal = React.createClass({
                         return <li key = {gallery.id} className = "gallery-item"
                           onClick = {function(){
                             GalleryClientActions.postToGallery(this.props.user, gallery, this.props.photo)
+                            
                           }.bind(this)}>
                           <div className = "gallery-cover-container">
                             <img className = "gallery-cover" src={gallery.cover_photo[0].url} />

@@ -40,6 +40,7 @@
   align-items: center;
   color: white;
   cursor: pointer;
+  height: 60px;
 }
 
 .photo-content-tab-selected{

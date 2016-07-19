@@ -54,16 +54,17 @@
 	    IndexRoute = ReactRouter.IndexRoute,
 	    hashHistory = ReactRouter.hashHistory;
 	//actions
-	var PhotosClientActions = __webpack_require__(222);
-	var UserClientActions = __webpack_require__(229);
-	var GalleryClientActions = __webpack_require__(232);
+	var PhotosClientActions = __webpack_require__(221);
+	var UserClientActions = __webpack_require__(228);
+	var GalleryClientActions = __webpack_require__(231);
 	//stores
-	var PhotoStore = __webpack_require__(235);
-	var UserStore = __webpack_require__(253);
-	var GalleryStore = __webpack_require__(254);
+	var PhotoStore = __webpack_require__(234);
+	var UserStore = __webpack_require__(252);
+	var GalleryStore = __webpack_require__(253);
 	//components
-	var HomePage = __webpack_require__(221);
+	var HomePage = __webpack_require__(254);
 	var PhotoContent = __webpack_require__(281);
+	var NotificationPanel = __webpack_require__(282);
 
 	var imageSize = 20;
 
@@ -116,7 +117,8 @@
 	        { className: 'navbar' },
 	        this._handleLogin()
 	      ),
-	      this.props.children
+	      this.props.children,
+	      React.createElement(NotificationPanel, null)
 	    );
 	  }
 	});
@@ -131,8 +133,6 @@
 	    React.createElement(Route, { path: ':tabType', components: PhotoContent })
 	  )
 	);
-
-	//<Route path="home" components={HomePage}/>
 
 	document.addEventListener('DOMContentLoaded', function () {
 	  _500px.init({
@@ -25334,262 +25334,7 @@
 /* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
-	//react
-	var React = __webpack_require__(1);
-	//actions
-	var PhotosClientActions = __webpack_require__(222);
-	var UserClientActions = __webpack_require__(229);
-	var GalleryClientActions = __webpack_require__(232);
-	//stores
-	var PhotoStore = __webpack_require__(235);
-	var UserStore = __webpack_require__(253);
-	var GalleryStore = __webpack_require__(254);
-	//components
-	var CollectionModal = __webpack_require__(255);
-
-	//image sizes
-	var ImageSize = __webpack_require__(280);
-
-	var imageSize = 20;
-
-	var imageHeight = parseInt(ImageSize[imageSize.toString()]);
-
-	var edge = 5; //this is the space between the pictures
-
-	var profilePictureSize = 40;
-	var fontHeight = 20;
-	var fadeHeight = 50;
-	var containerMinWidth = 300;
-	var containerWidth;
-
-	var currentUser;
-
-	var getRatingWidth = function (rating) {
-	  if (rating.toString().length > 3) {
-	    return 53;
-	  } else {
-	    return 43;
-	  }
-	};
-
-	var HomePage = React.createClass({
-	  displayName: 'HomePage',
-
-	  getInitialState: function () {
-	    return { loaded: false };
-	  },
-
-	  componentDidUpdate: function () {
-	    //the photos container width shrinks after the photos loaded
-	    //this one time re-render sets the container to the original width;
-	    if (!this.state.loaded && this.props.photos.length > 0) {
-	      this.state.loaded = true;
-	      this.forceUpdate();
-	    }
-	  },
-
-	  handleNSFW: function (photo, position) {
-	    if (photo.show && photo.nsfw) {
-	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
-	          "width": position[1] - edge * 2 }, src: photo.image_url, onClick: function () {
-	          var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
-	          win.focus();
-	        }.bind(this) });
-	    } else if (photo.show) {
-	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
-	          "width": position[1] - edge * 2 }, src: photo.image_url });
-	    } else {
-
-	      return React.createElement(
-	        'div',
-	        { className: 'popular-image nsfw-holder', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
-	            "width": position[1] - edge * 2, "fontSize": position[1] / 10 }, onClick: function () {
-	            photo.show = true;
-	            this.forceUpdate();
-	          }.bind(this) },
-	        React.createElement(
-	          'span',
-	          null,
-	          'Adult Content'
-	        ),
-	        React.createElement('span', { style: { "height": position[0] / 100 } }),
-	        React.createElement(
-	          'span',
-	          null,
-	          'Click to Show'
-	        )
-	      );
-	    }
-	  },
-
-	  handleFavorite: function (photo) {
-	    if (photo.liked) {
-	      //photo is liked, click is unlike action
-	      return React.createElement(
-	        'i',
-	        { className: 'material-icons hred', onClick: function (e) {
-	            e.stopPropagation();
-	            PhotosClientActions.unlikePhoto(photo);
-	          } },
-	        'favorite'
-	      );
-	    } else {
-	      //photo is not liked, click is like action
-	      return React.createElement(
-	        'i',
-	        { className: 'material-icons hred', onClick: function (e) {
-	            e.stopPropagation();
-	            PhotosClientActions.likePhoto(photo);
-	          } },
-	        'favorite_border'
-	      );
-	    }
-	  },
-
-	  setPhotoPosition: function () {
-
-	    if (!document.getElementById("photo-container")) {
-	      return [[0, 0, 0, 0]];
-	    }
-
-	    var position = []; //[height, width, top, left]
-
-	    var container = document.getElementById("photo-container").getBoundingClientRect();
-	    containerWidth = container.width;
-	    var length = this.props.photos.length;
-	    var photos = this.props.photos;
-	    var i = 0;
-	    var row = [];
-	    var rowWidth = 0;
-	    var corner = 0;
-	    var nextcorner = 0;
-	    var photo;
-	    while (i < length) {
-	      photo = photos[i];
-	      photo.newWidth = photo.width * (imageHeight / photo.height);
-
-	      if (rowWidth + photo.newWidth > container.width) {
-
-	        rowWidth += photo.newWidth;
-	        row.push(photo);
-	        var scale = container.width / rowWidth;
-
-	        row.forEach(function (rowPhoto) {
-	          var photoWidth = rowPhoto.width * (imageHeight / rowPhoto.height);
-	          position.push([imageHeight * scale, photoWidth * scale, corner, nextcorner]);
-	          nextcorner += photoWidth * scale;
-	        });
-	        corner += imageHeight * scale;
-	        row = [];
-	        rowWidth = 0;
-	        nextcorner = 0;
-	      } else {
-	        rowWidth += photo.newWidth;
-	        row.push(photo);
-	      }
-	      i++;
-	    }
-
-	    row.forEach(function (rowPhoto) {
-	      // the last photo is appended
-	      var photoWidth = rowPhoto.width * (imageHeight / rowPhoto.height);
-	      position.push([imageHeight, photoWidth, corner, nextcorner]);
-	      nextcorner += photoWidth;
-	    });
-
-	    position.push(corner + imageHeight);
-
-	    return position;
-	  },
-
-	  render: function () {
-	    var position = this.setPhotoPosition(); // get all the position of the photo to display
-
-	    return React.createElement(
-	      'div',
-	      { className: 'home-page' },
-	      React.createElement(
-	        'div',
-	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": position[position.length - 1], "minWidth": 300 } },
-	        this.props.photos.map(function (photo, i) {
-	          return React.createElement(
-	            'div',
-	            { className: 'popular-image-container', style: { "top": position[i][2], "left": position[i][3], "height": position[i][0],
-	                "width": position[i][1] }, key: photo.id },
-	            React.createElement(
-	              'div',
-	              { className: 'image-wrapper', onClick: function () {
-	                  if (!photo.nsfw) {
-	                    var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
-	                    win.focus();
-	                  }
-	                },
-
-	                style: { "height": position[i][0],
-	                  "width": position[i][1] } },
-	              React.createElement('div', { className: 'image-overlay', style: { "top": 0, "left": edge, "height": position[i][0],
-	                  "width": position[i][1] - edge * 2 } }),
-	              this.handleNSFW(photo, position[i]),
-	              React.createElement('div', { className: 'image-top-fade', on: true, style: { "top": edge, "left": edge, "height": fadeHeight,
-	                  "width": position[i][1] - edge * 2 } }),
-	              React.createElement('div', { className: 'image-bot-fade', style: { "top": position[i][0] - edge - fadeHeight, "left": edge, "height": fadeHeight,
-	                  "width": position[i][1] - edge * 2 } }),
-	              React.createElement('img', { className: 'author-photo', onClick: function (e) {
-	                  e.stopPropagation();
-	                  var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
-	                },
-	                style: { "top": position[i][0] - edge - profilePictureSize, "left": edge + edge,
-	                  "height": profilePictureSize, "width": profilePictureSize }, src: photo.user.userpic_url }),
-	              React.createElement(
-	                'div',
-	                { className: 'author-username', onClick: function (e) {
-	                    e.stopPropagation();
-	                    var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
-	                  },
-	                  style: { "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2, "left": edge + profilePictureSize + 2 * edge, "height": fontHeight } },
-	                photo.user.username
-	              ),
-	              React.createElement(
-	                'div',
-	                { className: 'image-views', style: { "left": edge + edge, "top": edge } },
-	                React.createElement(
-	                  'i',
-	                  { className: 'material-icons md-light space-right' },
-	                  ''
-	                ),
-	                photo.times_viewed
-	              ),
-	              React.createElement(
-	                'div',
-	                { className: 'image-favorite', style: { "left": position[i][1] - edge * 2 - 20 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
-	                this.handleFavorite(photo)
-	              ),
-	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.props.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.props.galleries }),
-	              React.createElement(
-	                'div',
-	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
-	                React.createElement(
-	                  'i',
-	                  { className: 'material-icons md-light space-right' },
-	                  ''
-	                ),
-	                photo.rating
-	              )
-	            )
-	          );
-	        }.bind(this))
-	      )
-	    );
-	  }
-	});
-
-	module.exports = HomePage;
-
-/***/ },
-/* 222 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var PhotoApiUtils = __webpack_require__(223);
+	var PhotoApiUtils = __webpack_require__(222);
 
 	var PhotosClientActions = {
 	  fetchPhotos: PhotoApiUtils.fetchPhotos,
@@ -25601,11 +25346,11 @@
 	module.exports = PhotosClientActions;
 
 /***/ },
-/* 223 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(224);
-	var PhotoConstants = __webpack_require__(228);
+	var Dispatcher = __webpack_require__(223);
+	var PhotoConstants = __webpack_require__(227);
 
 	module.exports = {
 	  fetchPhotos: function (size, feature) {
@@ -25654,14 +25399,14 @@
 	};
 
 /***/ },
-/* 224 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(225).Dispatcher;
+	var Dispatcher = __webpack_require__(224).Dispatcher;
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 225 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25673,11 +25418,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(226);
+	module.exports.Dispatcher = __webpack_require__(225);
 
 
 /***/ },
-/* 226 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25699,7 +25444,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(227);
+	var invariant = __webpack_require__(226);
 
 	var _prefix = 'ID_';
 
@@ -25914,7 +25659,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 227 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25969,7 +25714,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 228 */
+/* 227 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -25978,10 +25723,10 @@
 	};
 
 /***/ },
-/* 229 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var UserApiUtils = __webpack_require__(230);
+	var UserApiUtils = __webpack_require__(229);
 
 	var UserClientActions = {
 	  fetchCurrentUser: UserApiUtils.fetchCurrentUser,
@@ -25991,11 +25736,11 @@
 	module.exports = UserClientActions;
 
 /***/ },
-/* 230 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(224);
-	var UserConstants = __webpack_require__(231);
+	var Dispatcher = __webpack_require__(223);
+	var UserConstants = __webpack_require__(230);
 
 	module.exports = {
 	  fetchCurrentUser: function () {
@@ -26010,7 +25755,7 @@
 	};
 
 /***/ },
-/* 231 */
+/* 230 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -26018,10 +25763,10 @@
 	};
 
 /***/ },
-/* 232 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var GalleryApiUtils = __webpack_require__(233);
+	var GalleryApiUtils = __webpack_require__(232);
 
 	var GalleryClientActions = {
 	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries,
@@ -26031,11 +25776,13 @@
 	module.exports = GalleryClientActions;
 
 /***/ },
-/* 233 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(224);
-	var GalleryConstants = __webpack_require__(234);
+	var Dispatcher = __webpack_require__(223);
+	var GalleryConstants = __webpack_require__(233);
+
+	var NotificationClientActions = __webpack_require__(283);
 
 	var GalleryApiUtils = {
 	  fetchUserGalleries: function (user) {
@@ -26051,12 +25798,9 @@
 	    console.log(user, gallery, photo);
 	    console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
 	    _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', 'put', { add: { 'after': { 'id': null }, 'photos': [photo.id] } }, function (response) {
-	      console.log(response);
-	      // Dispatcher.dispatch({
-	      //   actionType: GalleryConstants.fetchUserGalleries,
-	      //   items: response.data.galleries
-	      //   }
-	      // );
+	      if (response.data[photo.id + ""].result === "added") {
+	        NotificationClientActions.addNotification({ action: "add", item1: photo, item2: gallery });
+	      }
 	    });
 	  }
 	};
@@ -26064,7 +25808,7 @@
 	module.exports = GalleryApiUtils;
 
 /***/ },
-/* 234 */
+/* 233 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -26072,13 +25816,13 @@
 	};
 
 /***/ },
-/* 235 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(236).Store;
+	var AppDispatcher = __webpack_require__(223),
+	    Store = __webpack_require__(235).Store;
 
-	var PhotoConstants = __webpack_require__(228);
+	var PhotoConstants = __webpack_require__(227);
 	var PhotoStore = new Store(AppDispatcher);
 
 	var photos = [];
@@ -26117,7 +25861,7 @@
 	module.exports = PhotoStore;
 
 /***/ },
-/* 236 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26129,15 +25873,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Container = __webpack_require__(237);
-	module.exports.MapStore = __webpack_require__(240);
-	module.exports.Mixin = __webpack_require__(252);
-	module.exports.ReduceStore = __webpack_require__(241);
-	module.exports.Store = __webpack_require__(242);
+	module.exports.Container = __webpack_require__(236);
+	module.exports.MapStore = __webpack_require__(239);
+	module.exports.Mixin = __webpack_require__(251);
+	module.exports.ReduceStore = __webpack_require__(240);
+	module.exports.Store = __webpack_require__(241);
 
 
 /***/ },
-/* 237 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26159,10 +25903,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStoreGroup = __webpack_require__(238);
+	var FluxStoreGroup = __webpack_require__(237);
 
-	var invariant = __webpack_require__(227);
-	var shallowEqual = __webpack_require__(239);
+	var invariant = __webpack_require__(226);
+	var shallowEqual = __webpack_require__(238);
 
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -26320,7 +26064,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 238 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26339,7 +26083,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(227);
+	var invariant = __webpack_require__(226);
 
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -26401,7 +26145,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 239 */
+/* 238 */
 /***/ function(module, exports) {
 
 	/**
@@ -26456,7 +26200,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 240 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26477,10 +26221,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxReduceStore = __webpack_require__(241);
-	var Immutable = __webpack_require__(251);
+	var FluxReduceStore = __webpack_require__(240);
+	var Immutable = __webpack_require__(250);
 
-	var invariant = __webpack_require__(227);
+	var invariant = __webpack_require__(226);
 
 	/**
 	 * This is a simple store. It allows caching key value pairs. An implementation
@@ -26606,7 +26350,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 241 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26627,10 +26371,10 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FluxStore = __webpack_require__(242);
+	var FluxStore = __webpack_require__(241);
 
-	var abstractMethod = __webpack_require__(250);
-	var invariant = __webpack_require__(227);
+	var abstractMethod = __webpack_require__(249);
+	var invariant = __webpack_require__(226);
 
 	var FluxReduceStore = (function (_FluxStore) {
 	  _inherits(FluxReduceStore, _FluxStore);
@@ -26713,7 +26457,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 242 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26732,11 +26476,11 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _require = __webpack_require__(243);
+	var _require = __webpack_require__(242);
 
 	var EventEmitter = _require.EventEmitter;
 
-	var invariant = __webpack_require__(227);
+	var invariant = __webpack_require__(226);
 
 	/**
 	 * This class should be extended by the stores in your application, like so:
@@ -26896,7 +26640,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 243 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26909,14 +26653,14 @@
 	 */
 
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(244)
+	  EventEmitter: __webpack_require__(243)
 	};
 
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 244 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26935,11 +26679,11 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var EmitterSubscription = __webpack_require__(245);
-	var EventSubscriptionVendor = __webpack_require__(247);
+	var EmitterSubscription = __webpack_require__(244);
+	var EventSubscriptionVendor = __webpack_require__(246);
 
-	var emptyFunction = __webpack_require__(249);
-	var invariant = __webpack_require__(248);
+	var emptyFunction = __webpack_require__(248);
+	var invariant = __webpack_require__(247);
 
 	/**
 	 * @class BaseEventEmitter
@@ -27113,7 +26857,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 245 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27134,7 +26878,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var EventSubscription = __webpack_require__(246);
+	var EventSubscription = __webpack_require__(245);
 
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -27166,7 +26910,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 246 */
+/* 245 */
 /***/ function(module, exports) {
 
 	/**
@@ -27220,7 +26964,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 247 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27239,7 +26983,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(248);
+	var invariant = __webpack_require__(247);
 
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -27329,7 +27073,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 248 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27384,7 +27128,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 249 */
+/* 248 */
 /***/ function(module, exports) {
 
 	/**
@@ -27426,7 +27170,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 250 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27443,7 +27187,7 @@
 
 	'use strict';
 
-	var invariant = __webpack_require__(227);
+	var invariant = __webpack_require__(226);
 
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -27453,7 +27197,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 251 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32437,7 +32181,7 @@
 	}));
 
 /***/ },
-/* 252 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -32454,9 +32198,9 @@
 
 	'use strict';
 
-	var FluxStoreGroup = __webpack_require__(238);
+	var FluxStoreGroup = __webpack_require__(237);
 
-	var invariant = __webpack_require__(227);
+	var invariant = __webpack_require__(226);
 
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -32560,13 +32304,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 253 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(236).Store;
+	var AppDispatcher = __webpack_require__(223),
+	    Store = __webpack_require__(235).Store;
 
-	var UserConstants = __webpack_require__(231);
+	var UserConstants = __webpack_require__(230);
 
 	var UserStore = new Store(AppDispatcher);
 
@@ -32592,13 +32336,13 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 254 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(224),
-	    Store = __webpack_require__(236).Store;
+	var AppDispatcher = __webpack_require__(223),
+	    Store = __webpack_require__(235).Store;
 
-	var GalleryConstants = __webpack_require__(234);
+	var GalleryConstants = __webpack_require__(233);
 
 	var GalleryStore = new Store(AppDispatcher);
 
@@ -32629,6 +32373,261 @@
 	module.exports = GalleryStore;
 
 /***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	//react
+	var React = __webpack_require__(1);
+	//actions
+	var PhotosClientActions = __webpack_require__(221);
+	var UserClientActions = __webpack_require__(228);
+	var GalleryClientActions = __webpack_require__(231);
+	//stores
+	var PhotoStore = __webpack_require__(234);
+	var UserStore = __webpack_require__(252);
+	var GalleryStore = __webpack_require__(253);
+	//components
+	var CollectionModal = __webpack_require__(255);
+
+	//image sizes
+	var ImageSize = __webpack_require__(280);
+
+	var imageSize = 20;
+
+	var imageHeight = parseInt(ImageSize[imageSize.toString()]);
+
+	var edge = 5; //this is the space between the pictures
+
+	var profilePictureSize = 40;
+	var fontHeight = 20;
+	var fadeHeight = 50;
+	var containerMinWidth = 300;
+	var containerWidth;
+
+	var currentUser;
+
+	var getRatingWidth = function (rating) {
+	  if (rating.toString().length > 3) {
+	    return 53;
+	  } else {
+	    return 43;
+	  }
+	};
+
+	var HomePage = React.createClass({
+	  displayName: 'HomePage',
+
+	  getInitialState: function () {
+	    return { loaded: false };
+	  },
+
+	  componentDidUpdate: function () {
+	    //the photos container width shrinks after the photos loaded
+	    //this one time re-render sets the container to the original width;
+	    if (!this.state.loaded && this.props.photos.length > 0) {
+	      this.state.loaded = true;
+	      this.forceUpdate();
+	    }
+	  },
+
+	  handleNSFW: function (photo, position) {
+	    if (photo.show && photo.nsfw) {
+	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
+	          "width": position[1] - edge * 2 }, src: photo.image_url, onClick: function () {
+	          var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
+	          win.focus();
+	        }.bind(this) });
+	    } else if (photo.show) {
+	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
+	          "width": position[1] - edge * 2 }, src: photo.image_url });
+	    } else {
+
+	      return React.createElement(
+	        'div',
+	        { className: 'popular-image nsfw-holder', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
+	            "width": position[1] - edge * 2, "fontSize": position[1] / 10 }, onClick: function () {
+	            photo.show = true;
+	            this.forceUpdate();
+	          }.bind(this) },
+	        React.createElement(
+	          'span',
+	          null,
+	          'Adult Content'
+	        ),
+	        React.createElement('span', { style: { "height": position[0] / 100 } }),
+	        React.createElement(
+	          'span',
+	          null,
+	          'Click to Show'
+	        )
+	      );
+	    }
+	  },
+
+	  handleFavorite: function (photo) {
+	    if (photo.liked) {
+	      //photo is liked, click is unlike action
+	      return React.createElement(
+	        'i',
+	        { className: 'material-icons hred', onClick: function (e) {
+	            e.stopPropagation();
+	            PhotosClientActions.unlikePhoto(photo);
+	          } },
+	        'favorite'
+	      );
+	    } else {
+	      //photo is not liked, click is like action
+	      return React.createElement(
+	        'i',
+	        { className: 'material-icons hred', onClick: function (e) {
+	            e.stopPropagation();
+	            PhotosClientActions.likePhoto(photo);
+	          } },
+	        'favorite_border'
+	      );
+	    }
+	  },
+
+	  setPhotoPosition: function () {
+
+	    if (!document.getElementById("photo-container")) {
+	      return [[0, 0, 0, 0]];
+	    }
+
+	    var position = []; //[height, width, top, left]
+
+	    var container = document.getElementById("photo-container").getBoundingClientRect();
+	    containerWidth = container.width;
+	    var length = this.props.photos.length;
+	    var photos = this.props.photos;
+	    var i = 0;
+	    var row = [];
+	    var rowWidth = 0;
+	    var corner = 0;
+	    var nextcorner = 0;
+	    var photo;
+	    while (i < length) {
+	      photo = photos[i];
+	      photo.newWidth = photo.width * (imageHeight / photo.height);
+
+	      if (rowWidth + photo.newWidth > container.width) {
+
+	        rowWidth += photo.newWidth;
+	        row.push(photo);
+	        var scale = container.width / rowWidth;
+
+	        row.forEach(function (rowPhoto) {
+	          var photoWidth = rowPhoto.width * (imageHeight / rowPhoto.height);
+	          position.push([imageHeight * scale, photoWidth * scale, corner, nextcorner]);
+	          nextcorner += photoWidth * scale;
+	        });
+	        corner += imageHeight * scale;
+	        row = [];
+	        rowWidth = 0;
+	        nextcorner = 0;
+	      } else {
+	        rowWidth += photo.newWidth;
+	        row.push(photo);
+	      }
+	      i++;
+	    }
+
+	    row.forEach(function (rowPhoto) {
+	      // the last photo is appended
+	      var photoWidth = rowPhoto.width * (imageHeight / rowPhoto.height);
+	      position.push([imageHeight, photoWidth, corner, nextcorner]);
+	      nextcorner += photoWidth;
+	    });
+
+	    position.push(corner + imageHeight);
+
+	    return position;
+	  },
+
+	  render: function () {
+	    var position = this.setPhotoPosition(); // get all the position of the photo to display
+
+	    return React.createElement(
+	      'div',
+	      { className: 'home-page' },
+	      React.createElement(
+	        'div',
+	        { className: 'popular-photos-list', id: 'photo-container', style: { "height": position[position.length - 1], "minWidth": 300 } },
+	        this.props.photos.map(function (photo, i) {
+	          return React.createElement(
+	            'div',
+	            { className: 'popular-image-container', style: { "top": position[i][2], "left": position[i][3], "height": position[i][0],
+	                "width": position[i][1] }, key: photo.id },
+	            React.createElement(
+	              'div',
+	              { className: 'image-wrapper', onClick: function () {
+	                  if (!photo.nsfw) {
+	                    var win = window.open("https://500px.com/photo/" + photo.id, '_blank');
+	                    win.focus();
+	                  }
+	                },
+
+	                style: { "height": position[i][0],
+	                  "width": position[i][1] } },
+	              React.createElement('div', { className: 'image-overlay', style: { "top": 0, "left": edge, "height": position[i][0],
+	                  "width": position[i][1] - edge * 2 } }),
+	              this.handleNSFW(photo, position[i]),
+	              React.createElement('div', { className: 'image-top-fade', on: true, style: { "top": edge, "left": edge, "height": fadeHeight,
+	                  "width": position[i][1] - edge * 2 } }),
+	              React.createElement('div', { className: 'image-bot-fade', style: { "top": position[i][0] - edge - fadeHeight, "left": edge, "height": fadeHeight,
+	                  "width": position[i][1] - edge * 2 } }),
+	              React.createElement('img', { className: 'author-photo', onClick: function (e) {
+	                  e.stopPropagation();
+	                  var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
+	                },
+	                style: { "top": position[i][0] - edge - profilePictureSize, "left": edge + edge,
+	                  "height": profilePictureSize, "width": profilePictureSize }, src: photo.user.userpic_url }),
+	              React.createElement(
+	                'div',
+	                { className: 'author-username', onClick: function (e) {
+	                    e.stopPropagation();
+	                    var win = window.open("https://500px.com/" + photo.user.username, '_blank');win.focus();
+	                  },
+	                  style: { "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2, "left": edge + profilePictureSize + 2 * edge, "height": fontHeight } },
+	                photo.user.username
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'image-views', style: { "left": edge + edge, "top": edge } },
+	                React.createElement(
+	                  'i',
+	                  { className: 'material-icons md-light space-right' },
+	                  ''
+	                ),
+	                photo.times_viewed
+	              ),
+	              React.createElement(
+	                'div',
+	                { className: 'image-favorite', style: { "left": position[i][1] - edge * 2 - 20 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
+	                this.handleFavorite(photo)
+	              ),
+	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.props.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.props.galleries }),
+	              React.createElement(
+	                'div',
+	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
+	                React.createElement(
+	                  'i',
+	                  { className: 'material-icons md-light space-right' },
+	                  ''
+	                ),
+	                photo.rating
+	              )
+	            )
+	          );
+	        }.bind(this))
+	      )
+	    );
+	  }
+	});
+
+	module.exports = HomePage;
+
+/***/ },
 /* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -32637,7 +32636,7 @@
 	    LinkedStateMixin = __webpack_require__(256),
 	    Modal = __webpack_require__(260);
 	//actions
-	var GalleryClientActions = __webpack_require__(232);
+	var GalleryClientActions = __webpack_require__(231);
 
 	var selected;
 	var style = {
@@ -34967,15 +34966,15 @@
 	var React = __webpack_require__(1),
 	    hashHistory = __webpack_require__(159).hashHistory;
 	//actions
-	var PhotosClientActions = __webpack_require__(222);
-	var UserClientActions = __webpack_require__(229);
-	var GalleryClientActions = __webpack_require__(232);
+	var PhotosClientActions = __webpack_require__(221);
+	var UserClientActions = __webpack_require__(228);
+	var GalleryClientActions = __webpack_require__(231);
 	//stores
-	var PhotoStore = __webpack_require__(235);
-	var UserStore = __webpack_require__(253);
-	var GalleryStore = __webpack_require__(254);
+	var PhotoStore = __webpack_require__(234);
+	var UserStore = __webpack_require__(252);
+	var GalleryStore = __webpack_require__(253);
 	//components
-	var HomePage = __webpack_require__(221);
+	var HomePage = __webpack_require__(254);
 	//image sizes
 	var ImageSize = __webpack_require__(280);
 	var imageSize = 20;
@@ -35129,6 +35128,209 @@
 	});
 
 	module.exports = PhotoContent;
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	//react
+	var React = __webpack_require__(1);
+	//actions
+	var NotificationClientActions = __webpack_require__(283);
+	//stores
+	var NotificationStore = __webpack_require__(286);
+
+	var NotificationPanel = React.createClass({
+	  displayName: 'NotificationPanel',
+
+	  getInitialState: function () {
+	    return { notifications: [] };
+	  },
+
+	  componentDidMount: function () {
+
+	    this.notificationListener = NotificationStore.addListener(this._onChange);
+
+	    // var timeoutID;
+	    // function delayedAlert() {
+	    //   timeoutID = window.setTimeout(slowAlert, 2000);
+	    // }
+	    //
+	    // function slowAlert() {
+	    //   alert("That was really slow!");
+	    // }
+	    //
+	    // delayedAlert();
+	  },
+
+	  _handleNotification: function (n) {
+	    if (n.action === "add") {
+	      return React.createElement(
+	        'li',
+	        { key: n.id, className: 'notification-list-item' },
+	        React.createElement(
+	          'div',
+	          { className: 'notification-list-image-wrapper' },
+	          React.createElement('img', { className: 'notification-list-photo-image', src: n.item1.image_url })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'notification-list-action' },
+	          'added to'
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'notification-list-image-wrapper' },
+	          React.createElement('img', { className: 'notification-list-gallery-image', src: n.item2.cover_photo[0].url })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'notification-list-gallery-name' },
+	          n.item2.name
+	        )
+	      );
+	    } else {}
+	  },
+
+	  _onChange: function () {
+	    var old = this.state.notifications;
+	    this.setState({ notifications: NotificationStore.fetchNotifications() });
+	  },
+
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'notification-panel' },
+	      React.createElement(
+	        'ul',
+	        { className: 'notification-list' },
+	        this.state.notifications.map(function (n, i) {
+	          return this._handleNotification();
+	        }.bind(this))
+	      )
+	    );
+	  }
+
+	});
+
+	module.exports = NotificationPanel;
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var NotificationApiUtil = __webpack_require__(284);
+
+	var NotificationClientActions = {
+	  addNotification: NotificationApiUtil.addNotification,
+	  deleteNotification: NotificationApiUtil.deleteNotification
+	};
+
+	module.exports = NotificationClientActions;
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(223);
+	var NotificationConstants = __webpack_require__(285);
+
+	module.exports = {
+	  addNotification: function (notification) {
+	    Dispatcher.dispatch({
+	      actionType: NotificationConstants.addNotification,
+	      items: notification
+	    });
+	  },
+	  deleteNotification: function (notification) {
+	    Dispatcher.dispatch({
+	      actionType: NotificationConstants.deleteNotification,
+	      items: notification
+	    });
+	  }
+	};
+
+/***/ },
+/* 285 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  addNotification: "ADDNOTIFICATION",
+	  deleteNotification: "DELETENOTIFICATION"
+	};
+
+/***/ },
+/* 286 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(223),
+	    Store = __webpack_require__(235).Store;
+
+	//constants
+	var NotificationConstants = __webpack_require__(285);
+	//notification class
+	var Notificaton = __webpack_require__(288);
+
+	var NotificationStore = new Store(AppDispatcher);
+	var notificationIdx = 0;
+	var notifications = [];
+
+	NotificationStore.addNotification = function (item) {
+	  //photo url, photo name  "added to " gallery url gallery name;
+	  var newNotification = new Notificaton(notificationIdx, item);
+	  newNotification.startTimer();
+	  notifications.push(newNotification);
+	  this.__emitChange();
+	};
+
+	NotificationStore.deleteNotification = function (item) {
+	  var deleteIdx = notifications.findIndex(function (notification) {
+	    return notification.id === item.id;
+	  });
+	  notifications.splice(deleteIdx, 1);
+	  this.__emitChange();
+	};
+
+	NotificationStore.fetchNotifications = function () {
+	  return notifications;
+	};
+
+	NotificationStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case NotificationConstants.addNotification:
+	      NotificationStore.addNotification(payload.item);
+	      break;
+	    case NotificationConstants.deleteNotification:
+	      NotificationStore.deleteNotification(payload.item);
+	      break;
+	  }
+	};
+
+	module.exports = NotificationStore;
+
+/***/ },
+/* 287 */,
+/* 288 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var NotificationClientActions = __webpack_require__(283);
+
+	var Notificaton = function (id, obj) {
+	  this.id = id;
+	  this.item1 = obj.item1;
+	  this.item2 = obj.item2;
+	  this.action = obj.action;
+	};
+
+	Notificaton.prototype.startTimer = function () {
+	  window.setTimeout(this.deleteNotification(this), 1000);
+	};
+
+	Notificaton.prototype.deleteNotification = function (notification) {
+	  NotificationClientActions.deleteNotification(notification);
+	};
+
+	module.exports = Notificaton;
 
 /***/ }
 /******/ ]);
