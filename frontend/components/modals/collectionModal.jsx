@@ -2,7 +2,8 @@
 var React = require('react'),
     LinkedStateMixin = require('react-addons-linked-state-mixin'),
     Modal = require("react-modal");
-
+//actions
+var GalleryClientActions = require('../../actions/galleryClientActions');
 
 var selected;
 var style = {
@@ -86,14 +87,17 @@ var collectionModal = React.createClass({
                  <div className="collection-modal-right">
                     <ul className = "collections-container">
                       {this.props.galleries.map(function(gallery){
-                        return <li key = {gallery.id} className = "gallery-item">
+                        return <li key = {gallery.id} className = "gallery-item"
+                          onClick = {function(){
+                            GalleryClientActions.postToGallery(this.props.user, gallery, this.props.photo)
+                          }.bind(this)}>
                           <img className = "gallery-cover" src={gallery.cover_photo[0].url} />
                           <div className = "add-gallery-button">
                             <i className = "material-icons md-48 add-gallery-icon">&#xE146;</i>
                             <div className = "add-gallery-text">Gallery</div>
                           </div>
                         </li>;
-                      })}
+                      }.bind(this))}
                     </ul>
                  </div>
                </div>

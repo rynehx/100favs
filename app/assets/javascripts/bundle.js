@@ -25569,7 +25569,7 @@
 	                { className: 'image-favorite', style: { "left": position[i][1] - edge * 2 - 20 - 3, "top": position[i][0] - edge - fontHeight / 2 - profilePictureSize / 2 } },
 	                this.handleFavorite(photo)
 	              ),
-	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, profilePictureSize: profilePictureSize, photo: photo, galleries: this.state.galleries }),
+	              React.createElement(CollectionModal, { position: position[i], edge: edge, fontHeight: fontHeight, user: this.state.user, profilePictureSize: profilePictureSize, photo: photo, galleries: this.state.galleries }),
 	              React.createElement(
 	                'div',
 	                { className: 'image-rating', style: { "left": position[i][1] - edge * 2 - getRatingWidth(photo.rating) - 3, "top": edge, "width": getRatingWidth(photo.rating) } },
@@ -32540,6 +32540,8 @@
 	var React = __webpack_require__(1),
 	    LinkedStateMixin = __webpack_require__(252),
 	    Modal = __webpack_require__(256);
+	//actions
+	var GalleryClientActions = __webpack_require__(282);
 
 	var selected;
 	var style = {
@@ -32634,7 +32636,10 @@
 	              this.props.galleries.map(function (gallery) {
 	                return React.createElement(
 	                  'li',
-	                  { key: gallery.id, className: 'gallery-item' },
+	                  { key: gallery.id, className: 'gallery-item',
+	                    onClick: function () {
+	                      GalleryClientActions.postToGallery(this.props.user, gallery, this.props.photo);
+	                    }.bind(this) },
 	                  React.createElement('img', { className: 'gallery-cover', src: gallery.cover_photo[0].url }),
 	                  React.createElement(
 	                    'div',
@@ -32651,7 +32656,7 @@
 	                    )
 	                  )
 	                );
-	              })
+	              }.bind(this))
 	            )
 	          )
 	        )
@@ -34861,7 +34866,8 @@
 	var GalleryApiUtils = __webpack_require__(278);
 
 	var GalleryClientActions = {
-	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries
+	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries,
+	  postToGallery: GalleryApiUtils.postToGallery
 	};
 
 	module.exports = GalleryClientActions;
@@ -34880,6 +34886,19 @@
 	        actionType: GalleryConstants.fetchUserGalleries,
 	        items: response.data.galleries
 	      });
+	    });
+	  },
+
+	  postToGallery: function (user, gallery, photo) {
+	    console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
+	    _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', { add: { "after": { "id": null }, "photos": [photo.id] } }, function (response) {
+
+	      console.log(response);
+	      // Dispatcher.dispatch({
+	      //   actionType: GalleryConstants.fetchUserGalleries,
+	      //   items: response.data.galleries
+	      //   }
+	      // );
 	    });
 	  }
 	};
@@ -34930,6 +34949,20 @@
 	};
 
 	module.exports = GalleryStore;
+
+/***/ },
+/* 281 */,
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var GalleryApiUtils = __webpack_require__(278);
+
+	var GalleryClientActions = {
+	  fetchUserGalleries: GalleryApiUtils.fetchUserGalleries,
+	  postToGallery: GalleryApiUtils.postToGallery
+	};
+
+	module.exports = GalleryClientActions;
 
 /***/ }
 /******/ ]);

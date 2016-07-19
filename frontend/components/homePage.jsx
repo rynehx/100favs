@@ -259,7 +259,7 @@ var HomePage = React.createClass({
                     {this.handleFavorite(photo)}
                   </div>
 
-                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.state.galleries}/>
+                  <CollectionModal position = {position[i]} edge = {edge} fontHeight = {fontHeight} user = {this.state.user} profilePictureSize = {profilePictureSize} photo = {photo} galleries = {this.state.galleries}/>
 
 
 

@@ -10,6 +10,20 @@ var GalleryApiUtils = {
             }
           );
       });
+    },
+
+    postToGallery: function(user, gallery, photo){
+      console.log('/users/' + user.id + '/galleries/' + gallery.id + '/items');
+      _500px.api('/users/' + user.id + '/galleries/' + gallery.id + '/items', {add: {"after": { "id": null }, "photos": [ photo.id ]},},
+      function (response) {
+
+        console.log(response)
+          // Dispatcher.dispatch({
+          //   actionType: GalleryConstants.fetchUserGalleries,
+          //   items: response.data.galleries
+          //   }
+          // );
+      });
     }
 };
 
