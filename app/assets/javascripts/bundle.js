@@ -25777,7 +25777,6 @@
 	module.exports = {
 	  fetchCurrentUser: function () {
 	    _500px.api('/users', {}, function (response) {
-	      console.log(response);
 	      Dispatcher.dispatch({
 	        actionType: UserConstants.fetchCurrentUser,
 	        items: response.data.user
@@ -35122,6 +35121,13 @@
 	  },
 
 	  render: function () {
+	    var showTabs = tabs.filter(function (tab) {
+	      if (tab === "Friends" && !this.state.user) {
+	        return false;
+	      }
+	      return true;
+	    }.bind(this));
+
 	    return React.createElement(
 	      'div',
 	      { className: 'photo-content' },
@@ -35131,7 +35137,8 @@
 	        React.createElement(
 	          'ul',
 	          { className: 'photo-content-tab-container' },
-	          tabs.map(function (tab, i) {
+	          showTabs.map(function (tab, i) {
+
 	            if (!this.props.params.tabType && i === 0) {
 	              return React.createElement(
 	                'li',

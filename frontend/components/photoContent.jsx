@@ -129,11 +129,20 @@ var PhotoContent = React.createClass({
   },
 
   render: function(){
+    var showTabs = tabs.filter(function(tab){
+      if(tab === "Friends" && !this.state.user){
+        return false;
+      }
+      return true;
+    }.bind(this));
+
     return (
       <div className = "photo-content">
         <div id = "photo-tabs-bar" className = "photo-tabs-bar">
           <ul className = "photo-content-tab-container">
-            {tabs.map(function(tab,i){
+            {
+              showTabs.map(function(tab,i){
+
               if(!this.props.params.tabType && i===0){
                 return <li key = {i} className = "photo-content-tab photo-content-tab-selected">{tab}</li>;
               }else if(this.props.params.tabType === tab.toLowerCase()){
