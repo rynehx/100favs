@@ -35325,7 +35325,7 @@
 	};
 
 	Notificaton.prototype.startTimer = function () {
-	  window.setTimeout(this.deleteNotification(this), 1000);
+	  window.setTimeout(this.deleteNotification(this), 10000);
 	};
 
 	Notificaton.prototype.deleteNotification = function (notification) {
