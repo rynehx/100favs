@@ -14,6 +14,77 @@
 
 ###Display
 
+The photo are displayed in such a manner that all rows are equal height and equal width. Internally, each photo is scaled to allow the constraints. The algorithm used to position the photos is shown below. Each time the window size changes, the photos positions are re-calculated. However, since the front-end is implemented in React, the re-render is very fast!
+
+```javascript
+setPhotoPosition : function(){
+
+  if(!document.getElementById("photo-container")){
+    return [[0,0,0,0]];
+  }
+
+
+  var position =[];  //[height, width, top, left]
+
+  var container = document.getElementById("photo-container").getBoundingClientRect();
+  containerWidth = container.width;
+  var length = this.props.photos.length;
+  var photos = this.props.photos;
+  var i = 0;
+  var row = [];
+  var rowWidth = 0;
+  var corner = 0;
+  var nextcorner= 0;
+  var photo;
+
+  while(i < length){
+    photo = photos[i];
+    photo.newWidth = (photo.width*(imageHeight/photo.height));
+
+        if(rowWidth+photo.newWidth > container.width ){
+
+          rowWidth+=photo.newWidth;
+          row.push(photo);
+          var scale = container.width/(rowWidth);
+
+          row.forEach(function(rowPhoto){
+            var photoWidth = (rowPhoto.width*(imageHeight/rowPhoto.height));
+            position.push([imageHeight*scale, photoWidth*scale, corner, nextcorner]);
+            nextcorner+=photoWidth*scale;
+
+          });
+          corner+=imageHeight*scale;
+          row = [];
+          rowWidth = 0;
+          nextcorner = 0;
+        }else{
+          rowWidth+=photo.newWidth;
+          row.push(photo);
+        }
+    i++;
+  }
+
+  row.forEach(function(rowPhoto){ // the last photo is appended
+    var photoWidth = (rowPhoto.width*(imageHeight/rowPhoto.height));
+    position.push([imageHeight, photoWidth, corner, nextcorner]);
+    nextcorner+=photoWidth;
+  });
+
+  position.push(corner+imageHeight);
+
+  return position;
+}
+```
+
+```
+The algorithm works as follows:
+1. iterate through the photos
+2. if the current element width is less than the parent container added it to the current row
+3. if the current element width plus the combined width of the previously added elements
+   is greater than the window width, then scaled the photos vertically to the width of the parent
+   container.
+4. any left over elements at the last row is added using a specified max height
+```
 
 
 ###Various Categories of 100 Photos
@@ -36,11 +107,14 @@ A logged in user can add photo to his/her galleries. By click the add to gallery
 
 The `NSFW filter` is implemented by rendering a `<div>` element instead of a `<img>` element. When the photos are fetched, a scan is done to check which pictures for NSFW content. The NSFW pictures are marked and put in the photos store. When the pictures are rendered, only those who are SFW are rendered, while the NSFW photos show a grey frame (of the same dimension) with caption "adult content". However, the NSFW photo can still be viewed by clicking on the grey frame. When clicked, the NSFW photo is unmarked and React changes the `<div>` to an `<img>`. Since the grey frame is the same dimension as the picture, the reveal will not force a shift in the positioning of the photos.
 
+In the event that a NSFW photo is shown through the filter means the author failed to label the item as NSFW. To confirm this, one can click on the photo and go to the site. If the site did not block the image, then the image is indeed not explicitly labeled as NSFW.
+
 ###Notification Panel
 
 The `Notification Panel` is implemented by creating a separate `Notification Store` to store notification object that are created on the success of an API request. Upon the success of a API request such as liking a photo, a new notification object is created from the notification constructor.
 
-```var Notificaton = function(id, obj){
+```javascript
+var Notificaton = function(id, obj){
   this.id = id;
   this.item1 = obj.item1;
   this.item2 = obj.item2;
@@ -50,7 +124,6 @@ The `Notification Panel` is implemented by creating a separate `Notification Sto
 Notificaton.prototype.startTimer = function(){
   window.setTimeout(this.deleteNotification(this), 5000);
 };
-
 
 Notificaton.prototype.deleteNotification = function(notification){
   NotificationClientActions.deleteNotification(notification);

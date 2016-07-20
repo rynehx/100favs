@@ -13,7 +13,7 @@ var GalleryStore = require('../stores/galleryStore');
 var HomePage = require("./homePage");
 //image sizes
 var ImageSize = require('../util/imageSizes');
-var imageSize = 20;
+var imageSize = 31;
 
 var imageHeight = parseInt(ImageSize[imageSize.toString()]);
 var edge = 5; //this is the space between the pictures
