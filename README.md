@@ -6,7 +6,7 @@
 
 ##Features
 
-100pops had many nice features detailed in the sections below.
+100pops has many nice features detailed in the sections below.
 
 ###Single-Page App
 
@@ -83,7 +83,8 @@ The algorithm works as follows:
 3. if the current element width plus the combined width of the previously added elements
    is greater than the window width, then scaled the photos vertically to the width of the parent
    container.
-4. any left over elements at the last row is added using a specified max height
+4. start a new row and repeat
+5. any left over elements at the last row is added using a specified max height
 ```
 
 
@@ -105,7 +106,7 @@ A logged in user can add photo to his/her galleries. By click the add to gallery
 
 ###NSFW Filter
 
-The `NSFW filter` is implemented by rendering a `<div>` element instead of a `<img>` element. When the photos are fetched, a scan is done to check which pictures for NSFW content. The NSFW pictures are marked and put in the photos store. When the pictures are rendered, only those who are SFW are rendered, while the NSFW photos show a grey frame (of the same dimension) with caption "adult content". However, the NSFW photo can still be viewed by clicking on the grey frame. When clicked, the NSFW photo is unmarked and React changes the `<div>` to an `<img>`. Since the grey frame is the same dimension as the picture, the reveal will not force a shift in the positioning of the photos.
+The `NSFW filter` is implemented by rendering a `<div>` element instead of a `<img>` element. When the photos are fetched, a scan is done to check pictures for NSFW content. The NSFW pictures are marked and all the photos are put in the photos store. When the pictures are rendered, only those who are SFW are rendered, while the NSFW photos show a grey frame (of the same dimension) with caption "adult content". However, the NSFW photo can still be viewed by clicking on the grey frame. When clicked, the NSFW photo is unmarked and React changes the `<div>` to an `<img>`. Since the grey frame is the same dimension as the picture, the reveal will not force a shift in the positioning of the photos.
 
 In the event that a NSFW photo is shown through the filter means the author failed to label the item as NSFW. To confirm this, one can click on the photo and go to the site. If the site did not block the image, then the image is indeed not explicitly labeled as NSFW.
 
@@ -130,4 +131,4 @@ Notificaton.prototype.deleteNotification = function(notification){
 };
 ```
 
-The notification constructor stores the id of the notification and an object that stores the event and items involved. The id is just an incremented value. The action determines how the notification is rendered (e.g. liking and adding to a gallery). After the notification is put in the store, the deleteNotification method is called to remove the notification after a set time using a asynchronous callback. The deleting feature is necessary to get ride of stale notifications.
+The notification constructor stores the id of the notification and an object that stores the event and items involved. The id is just an incremented value. The action determines how the notification is rendered (e.g. liking and adding to a gallery). After the notification is put in the store, the deleteNotification method is called to remove the notification after a set time using an asynchronous callback. The deleting feature is necessary to get ride of stale notifications.

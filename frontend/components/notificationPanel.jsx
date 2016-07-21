@@ -12,25 +12,11 @@ var NotificationPanel = React.createClass({
 
 
   componentDidMount: function(){
-
     this.notificationListener = NotificationStore.addListener(this._onChange);
-
-
-    // var timeoutID;
-    // function delayedAlert() {
-    //   timeoutID = window.setTimeout(slowAlert, 2000);
-    // }
-    //
-    // function slowAlert() {
-    //   alert("That was really slow!");
-    // }
-    //
-    // delayedAlert();
-
   },
 
 
-  _handleNotification: function(n){
+  _handleNotification: function(n){//display the like and add to gallery notification for the respective action
     if(n.action === "add"){
       return <li key = {n.id} className = "notification-list-item">
         <div className = "notification-list-image-wrapper">

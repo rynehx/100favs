@@ -66,8 +66,6 @@
 	var PhotoContent = __webpack_require__(284);
 	var NotificationPanel = __webpack_require__(285);
 
-	var imageSize = 20;
-
 	var App = React.createClass({
 	  displayName: 'App',
 
@@ -98,6 +96,7 @@
 	  },
 
 	  _handleLogin: function () {
+	    // shows login button if no user is logged in or user photo/logout if a user is logged in
 	    var login;
 	    if (this.state.user) {
 	      login = React.createElement(
@@ -164,6 +163,7 @@
 	);
 
 	document.addEventListener('DOMContentLoaded', function () {
+	  //renders after DOM is loaded
 	  _500px.init({
 	    sdk_key: '440b39a5a88d1dc3dc7536a15d2e50cd093e9c69'
 	  });
@@ -32505,6 +32505,7 @@
 	  },
 
 	  handleNSFW: function (photo, position) {
+	    //add NSFW blocker for NSFW photos
 	    if (photo.show && photo.nsfw) {
 	      return React.createElement('img', { className: 'popular-image', draggable: 'false', style: { "top": edge, "left": edge, "height": position[0] - edge * 2,
 	          "width": position[1] - edge * 2 }, src: photo.image_url, onClick: function () {
@@ -32539,6 +32540,7 @@
 	  },
 
 	  handleFavorite: function (position, photo) {
+	    //show the like button if user is logged in
 	    if (this.props.user) {
 	      var icon;
 	      if (photo.liked) {
@@ -32575,6 +32577,7 @@
 	  },
 
 	  handleCollection: function (position, photo) {
+	    //show the add to collection button if user is logged in
 	    if (this.props.user) {
 	      return React.createElement(CollectionModal, { position: position, edge: edge, fontHeight: fontHeight,
 	        user: this.props.user, profilePictureSize: profilePictureSize,
@@ -32585,6 +32588,7 @@
 	  },
 
 	  setPhotoPosition: function () {
+	    //calculates the position of each photo
 
 	    if (!document.getElementById("photo-container")) {
 	      return [[0, 0, 0, 0]];
@@ -35046,7 +35050,7 @@
 /* 283 */
 /***/ function(module, exports) {
 
-	module.exports = {
+	module.exports = { //sizes for 500px fetch photo api parameter
 	  20: "300px",
 	  31: "450px"
 	};
@@ -35252,22 +35256,11 @@
 	  },
 
 	  componentDidMount: function () {
-
 	    this.notificationListener = NotificationStore.addListener(this._onChange);
-
-	    // var timeoutID;
-	    // function delayedAlert() {
-	    //   timeoutID = window.setTimeout(slowAlert, 2000);
-	    // }
-	    //
-	    // function slowAlert() {
-	    //   alert("That was really slow!");
-	    // }
-	    //
-	    // delayedAlert();
 	  },
 
 	  _handleNotification: function (n) {
+	    //display the like and add to gallery notification for the respective action
 	    if (n.action === "add") {
 	      return React.createElement(
 	        'li',

@@ -59,6 +59,8 @@ body{
 .ReactModal__Body--open {
   overflow: hidden;
 }
+
+
 .container{
   display: flex;
   flex-direction: column;

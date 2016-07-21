@@ -20,10 +20,6 @@ var HomePage = require("./components/homePage");
 var PhotoContent = require('./components/photoContent');
 var NotificationPanel = require('./components/notificationPanel');
 
-var imageSize = 20;
-
-
-
 
 var App = React.createClass({
 
@@ -53,7 +49,7 @@ var App = React.createClass({
     this.setState({user: user});
   },
 
-  _handleLogin: function(){
+  _handleLogin: function(){ // shows login button if no user is logged in or user photo/logout if a user is logged in
     var login;
     if(this.state.user){
       login =
@@ -109,7 +105,7 @@ var AppRouter = (
 );
 
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function(){//renders after DOM is loaded
   _500px.init({
      sdk_key: '440b39a5a88d1dc3dc7536a15d2e50cd093e9c69'
    });

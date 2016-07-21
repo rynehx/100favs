@@ -53,7 +53,7 @@ var HomePage = React.createClass({
     }
   },
 
-  handleNSFW : function(photo, position){
+  handleNSFW : function(photo, position){ //add NSFW blocker for NSFW photos
     if(photo.show && photo.nsfw){
       return <img className = "popular-image" draggable="false" style = {{ "top": edge, "left": edge,"height" : position[0]-edge*2,
           "width" : position[1]-edge*2}} src={photo.image_url} onClick = {function(){
@@ -79,7 +79,7 @@ var HomePage = React.createClass({
     }
   },
 
-  handleFavorite: function(position, photo){
+  handleFavorite: function(position, photo){ //show the like button if user is logged in
     if(this.props.user){
       var icon;
       if(photo.liked){//photo is liked, click is unlike action
@@ -101,7 +101,7 @@ var HomePage = React.createClass({
 
   },
 
-  handleCollection: function(position, photo){
+  handleCollection: function(position, photo){ //show the add to collection button if user is logged in
     if(this.props.user){
       return <CollectionModal position = {position} edge = {edge} fontHeight = {fontHeight}
         user = {this.props.user} profilePictureSize = {profilePictureSize}
@@ -112,7 +112,7 @@ var HomePage = React.createClass({
 
   },
 
-  setPhotoPosition : function(){
+  setPhotoPosition : function(){ //calculates the position of each photo
 
     if(!document.getElementById("photo-container")){
       return [[0,0,0,0]];
