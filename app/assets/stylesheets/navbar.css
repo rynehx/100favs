@@ -1,8 +1,9 @@
 .navbar{
-  height: 150px;
+  height: 110px;
   width: 100%;
-  background-color: #D6FAFF;
+
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(white, #b3ffff);
 }

@@ -10,8 +10,8 @@
 
 .current-user-picture{
   position: absolute;
-  width: 130px;
-  height: 130px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   z-index: 1;
   top: 0px;
@@ -19,8 +19,8 @@
 }
 
 .current-user-container{
-  width: 130px;
-  height: 130px;
+  width: 90px;
+  height: 90px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,10 +29,10 @@
 
 .login-button{
   position: absolute;
-  width: 130px;
-  height: 130px;
+  width: 90px;
+  height: 90px;
   font-size: 30px;
-  background-color: blue;
+  background-color: #00e5e5;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,8 +43,8 @@
 
 .logout-button{
   position: absolute;
-  width: 130px;
-  height: 130px;
+  width: 90px;
+  height: 90px;
   font-size: 30px;
   background-color: blue;
   display: flex;
@@ -56,7 +56,7 @@
 }
 
 .login-button:hover {
-  background-color: green;
+  background-color: lightgrey;
 }
 
 .current-user-container:hover .current-user-picture{
